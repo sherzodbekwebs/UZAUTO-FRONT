@@ -169,105 +169,110 @@ const MissionVision = ({ lang = 'ru' }) => {
     }, [hash]);
 
     return (
-        <div className="pt-24 bg-[#F8FAFC] font-inter overflow-hidden min-h-screen">
+        <div className="pt-0 bg-[#F8FAFC] font-inter overflow-hidden min-h-screen">
 
             {/* 1. HERO SECTION */}
-            <section className="relative h-[400px] flex items-center justify-center bg-[#0a1425]">
+            {/* Balandlik va yozuv o'lchami moslandi */}
+            <section className="relative h-[300px] md:h-[400px] flex items-center justify-center bg-[#0a1425]">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/70 z-10"></div>
                 <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2000" className="absolute inset-0 w-full h-full object-cover opacity-40" alt="Corporate" />
                 <div className="relative z-20 text-center px-6">
-                    <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl lg:text-6xl font-semibold text-white tracking-tighter uppercase italic">
+                    <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl md:text-4xl lg:text-6xl font-semibold text-white tracking-tighter uppercase italic">
                         {t.heroTitle}
                     </motion.h1>
-                    <div className="w-20 h-1 bg-[#0054A6] mx-auto mt-6 rounded-full shadow-lg"></div>
+                    <div className="w-16 md:w-20 h-1 bg-[#0054A6] mx-auto mt-4 md:mt-6 rounded-full shadow-lg"></div>
                 </div>
             </section>
 
-            <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-24 relative z-30">
+            {/* Umumiy paddinglar moslandi */}
+            <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 py-12 md:py-24 relative z-30">
 
                 {/* 2. VISION & MISSION - id: mission-vision */}
-                <div id="mission-vision" className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-32 scroll-mt-28">
-                    <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-[#0054A6] text-white p-12 rounded-[40px] shadow-2xl relative overflow-hidden group">
-                        <Eye className="absolute -right-6 -bottom-6 opacity-10 group-hover:scale-110 transition-transform duration-700" size={240} />
-                        <h3 className="text-[10px] font-black tracking-[0.4em] mb-10 opacity-70 uppercase">{t.visionTitle}</h3>
-                        <p className="text-2xl lg:text-4xl font-semibold leading-tight relative z-10 tracking-tight">{t.visionText}</p>
+                <div id="mission-vision" className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 mb-16 md:mb-32 scroll-mt-28">
+                    {/* Quti ichidagi padding (p-8 md:p-12) va burchaklar dumaloqligi moslandi */}
+                    <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-[#0054A6] text-white p-8 md:p-12 rounded-[24px] md:rounded-[40px] shadow-2xl relative overflow-hidden group">
+                        {/* Orqa fon ikonka o'lchami telefonda kichrayadi */}
+                        <Eye className="absolute -right-6 -bottom-6 opacity-10 group-hover:scale-110 transition-transform duration-700 w-[160px] h-[160px] md:w-[240px] md:h-[240px]" />
+                        <h3 className="text-[10px] font-black tracking-[0.4em] mb-6 md:mb-10 opacity-70 uppercase">{t.visionTitle}</h3>
+                        <p className="text-xl md:text-2xl lg:text-4xl font-semibold leading-tight relative z-10 tracking-tight">{t.visionText}</p>
                     </motion.div>
 
-                    <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-white border border-gray-100 p-12 rounded-[40px] shadow-sm relative overflow-hidden group">
-                        <Target className="absolute -right-6 -bottom-6 text-gray-50 opacity-50 group-hover:scale-110 transition-transform duration-700" size={240} />
-                        <h3 className="text-[10px] font-black tracking-[0.4em] text-[#0054A6] mb-10 uppercase">{t.missionTitle}</h3>
-                        <p className="text-xl lg:text-3xl font-semibold text-[#1a2e44] leading-relaxed relative z-10 tracking-tight">{t.missionText}</p>
+                    <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-white border border-gray-100 p-8 md:p-12 rounded-[24px] md:rounded-[40px] shadow-sm relative overflow-hidden group">
+                        <Target className="absolute -right-6 -bottom-6 text-gray-50 opacity-50 group-hover:scale-110 transition-transform duration-700 w-[160px] h-[160px] md:w-[240px] md:h-[240px]" />
+                        <h3 className="text-[10px] font-black tracking-[0.4em] text-[#0054A6] mb-6 md:mb-10 uppercase">{t.missionTitle}</h3>
+                        <p className="text-lg md:text-xl lg:text-3xl font-semibold text-[#1a2e44] leading-relaxed relative z-10 tracking-tight">{t.missionText}</p>
                     </motion.div>
                 </div>
 
                 {/* 3. VALUES */}
-                <div className="mb-32">
-                    <h3 className="text-center text-[11px] font-black tracking-[0.5em] text-gray-400 mb-20 uppercase">{t.valuesTitle}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="mb-16 md:mb-32">
+                    <h3 className="text-center text-[10px] md:text-[11px] font-black tracking-[0.5em] text-gray-400 mb-10 md:mb-20 uppercase">{t.valuesTitle}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                         {[
                             { ...t.value1, icon: Users, color: "bg-blue-50" },
                             { ...t.value2, icon: Heart, color: "bg-red-50" },
                             { ...t.value3, icon: ShieldCheck, color: "bg-green-50" }
                         ].map((val, i) => (
                             <div key={i} className="text-center px-4">
-                                <div className={`w-16 h-16 ${val.color} text-[#0054A6] rounded-2xl flex items-center justify-center mx-auto mb-8 transition-all hover:shadow-lg duration-300`}>
-                                    <val.icon size={32} strokeWidth={1.5} />
+                                <div className={`w-14 h-14 md:w-16 md:h-16 ${val.color} text-[#0054A6] rounded-[14px] md:rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-8 transition-all hover:shadow-lg duration-300`}>
+                                    <val.icon className="w-6 h-6 md:w-8 md:h-8" strokeWidth={1.5} />
                                 </div>
-                                <h4 className="text-xl font-bold text-[#1a2e44] mb-4 uppercase tracking-tighter">{val.t}</h4>
-                                <p className="text-gray-500 font-medium leading-relaxed text-sm lg:text-base">{val.d}</p>
+                                <h4 className="text-lg md:text-xl font-bold text-[#1a2e44] mb-3 md:mb-4 uppercase tracking-tighter">{val.t}</h4>
+                                <p className="text-gray-500 font-medium leading-relaxed text-xs sm:text-sm lg:text-base">{val.d}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* 4. VERBATIM MAIN PROSE - id: quality-policy */}
-                <div id="quality-policy" className="max-w-5xl mx-auto mb-32 scroll-mt-28 space-y-12">
-                    <div className="bg-white p-10 lg:p-16 rounded-[48px] shadow-sm border border-gray-100">
-                        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-xl lg:text-2xl font-semibold text-[#1a2e44] leading-relaxed border-l-4 border-[#0054A6] pl-8 mb-12 italic">
+                <div id="quality-policy" className="max-w-5xl mx-auto mb-16 md:mb-32 scroll-mt-28 space-y-8 md:space-y-12">
+                    <div className="bg-white p-6 md:p-10 lg:p-16 rounded-[24px] md:rounded-[48px] shadow-sm border border-gray-100">
+                        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-lg md:text-xl lg:text-2xl font-semibold text-[#1a2e44] leading-relaxed border-l-4 border-[#0054A6] pl-4 md:pl-8 mb-8 md:mb-12 italic">
                             {t.introText1}
                         </motion.p>
-                        <div className="space-y-8 text-gray-600 text-lg lg:text-xl leading-relaxed text-justify font-medium">
+                        <div className="space-y-6 md:space-y-8 text-gray-600 text-base md:text-lg lg:text-xl leading-relaxed text-justify font-medium">
                             <p>{t.introText2}</p>
                             <p>{t.introText3}</p>
-                            <div className="flex items-center gap-5 p-8 bg-[#0a1425] text-white rounded-[32px] shadow-xl">
-                                <Zap className="text-[#0054A6] shrink-0" size={32} />
-                                <span className="font-bold text-sm lg:text-base tracking-wide uppercase">{t.scopeText}</span>
+                            {/* Flex layout moslandi, telefonda text bilan ikonka ustma-ust tushishi mumkinligi uchun markazga olindi */}
+                            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 p-5 md:p-8 bg-[#0a1425] text-white rounded-[20px] md:rounded-[32px] shadow-xl">
+                                <Zap className="text-[#0054A6] shrink-0 w-8 h-8 md:w-8 md:h-8" />
+                                <span className="font-bold text-xs md:text-sm lg:text-base tracking-wide uppercase">{t.scopeText}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* 5. STRATEGIC DIRECTIONS - id: strategic-directions */}
-                <div id="strategic-directions" className="max-w-6xl mx-auto mb-32 scroll-mt-28">
-                    <div className="bg-blue-50/50 p-10 lg:p-14 rounded-[40px] border border-blue-100/50 mb-12">
-                        <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} className="text-lg lg:text-xl text-[#1a2e44] font-bold leading-relaxed text-justify italic">
+                <div id="strategic-directions" className="max-w-6xl mx-auto mb-16 md:mb-32 scroll-mt-28">
+                    <div className="bg-blue-50/50 p-6 md:p-10 lg:p-14 rounded-[24px] md:rounded-[40px] border border-blue-100/50 mb-8 md:mb-12">
+                        <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} className="text-base md:text-lg lg:text-xl text-[#1a2e44] font-bold leading-relaxed text-justify italic">
                             {t.directionsIntro}
                         </motion.p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 items-start">
                         {/* 5.1 Directions List */}
-                        <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm">
-                            <h4 className="text-[11px] font-black tracking-[0.3em] text-[#0054A6] mb-10 uppercase">{lang === 'ru' ? 'Направления' : 'Yo\'nalishlar'}</h4>
-                            <ul className="space-y-4">
+                        <div className="bg-white p-6 md:p-10 rounded-[24px] md:rounded-[40px] border border-gray-100 shadow-sm">
+                            <h4 className="text-[10px] md:text-[11px] font-black tracking-[0.3em] text-[#0054A6] mb-6 md:mb-10 uppercase">{lang === 'ru' ? 'Направления' : 'Yo\'nalishlar'}</h4>
+                            <ul className="space-y-3 md:space-y-4">
                                 {(t.directions || []).map((goal, i) => (
-                                    <li key={i} className="flex gap-4 items-start p-4 bg-[#F8FAFC] rounded-2xl border border-transparent hover:border-blue-100 transition-all">
-                                        <CheckCircle2 size={20} className="text-[#0054A6] shrink-0 mt-0.5" />
-                                        <span className="text-[14px] lg:text-[15px] text-gray-600 font-semibold leading-snug">{goal}</span>
+                                    <li key={i} className="flex gap-3 md:gap-4 items-start p-3 md:p-4 bg-[#F8FAFC] rounded-[16px] md:rounded-2xl border border-transparent hover:border-blue-100 transition-all">
+                                        <CheckCircle2 className="w-5 h-5 text-[#0054A6] shrink-0 mt-0.5" />
+                                        <span className="text-[13px] md:text-[14px] lg:text-[15px] text-gray-600 font-semibold leading-snug">{goal}</span>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
                         {/* 5.2 Senior Management Obligations */}
-                        <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm">
-                            <h4 className="text-[11px] font-black tracking-[0.3em] text-[#0054A6] mb-10 uppercase">{lang === 'ru' ? 'Обязательства' : 'Majburiyatlar'}</h4>
-                            <p className="text-gray-400 font-bold text-[13px] mb-6 uppercase tracking-tighter">{t.obligationsIntro}</p>
-                            <ul className="space-y-4">
+                        <div className="bg-white p-6 md:p-10 rounded-[24px] md:rounded-[40px] border border-gray-100 shadow-sm">
+                            <h4 className="text-[10px] md:text-[11px] font-black tracking-[0.3em] text-[#0054A6] mb-6 md:mb-10 uppercase">{lang === 'ru' ? 'Обязательства' : 'Majburiyatlar'}</h4>
+                            <p className="text-gray-400 font-bold text-[12px] md:text-[13px] mb-4 md:mb-6 uppercase tracking-tighter">{t.obligationsIntro}</p>
+                            <ul className="space-y-3 md:space-y-4">
                                 {(t.obligations || []).map((obl, i) => (
-                                    <li key={i} className="flex gap-4 items-start p-4 bg-blue-50/30 rounded-2xl border border-transparent hover:border-blue-100 transition-all">
-                                        <ArrowRight size={20} className="text-[#0054A6] shrink-0 mt-0.5" />
-                                        <span className="text-[14px] lg:text-[15px] text-gray-600 font-semibold leading-snug">{obl}</span>
+                                    <li key={i} className="flex gap-3 md:gap-4 items-start p-3 md:p-4 bg-blue-50/30 rounded-[16px] md:rounded-2xl border border-transparent hover:border-blue-100 transition-all">
+                                        <ArrowRight className="w-5 h-5 text-[#0054A6] shrink-0 mt-0.5" />
+                                        <span className="text-[13px] md:text-[14px] lg:text-[15px] text-gray-600 font-semibold leading-snug">{obl}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -277,21 +282,21 @@ const MissionVision = ({ lang = 'ru' }) => {
 
                 {/* 6. POLICY RULES - id: personal-responsibilities */}
                 <div id="personal-responsibilities" className="scroll-mt-28">
-                    <div className="flex flex-col items-center mb-16">
-                        <h3 className="text-2xl lg:text-4xl font-semibold text-[#1a2e44] tracking-tight text-center">{t.policyObligationsHeader}</h3>
-                        <div className="w-16 h-1 bg-[#0054A6] mt-6 rounded-full"></div>
+                    <div className="flex flex-col items-center mb-10 md:mb-16">
+                        <h3 className="text-xl md:text-2xl lg:text-4xl font-semibold text-[#1a2e44] tracking-tight text-center">{t.policyObligationsHeader}</h3>
+                        <div className="w-12 md:w-16 h-1 bg-[#0054A6] mt-4 md:mt-6 rounded-full"></div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                         {/* Leaders */}
-                        <div className="bg-[#F8FAFC] p-10 rounded-[40px] border border-gray-100 shadow-sm">
-                            <div className="flex items-center gap-5 mb-10">
-                                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-[#0054A6] shadow-sm"><Briefcase size={28} /></div>
-                                <h4 className="text-lg lg:text-xl font-bold text-[#1a2e44] tracking-tight">{t.mgmtTitle}</h4>
+                        <div className="bg-[#F8FAFC] p-6 md:p-10 rounded-[24px] md:rounded-[40px] border border-gray-100 shadow-sm">
+                            <div className="flex items-center gap-4 md:gap-5 mb-6 md:mb-10">
+                                <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl flex items-center justify-center text-[#0054A6] shadow-sm"><Briefcase className="w-6 h-6 md:w-7 md:h-7" /></div>
+                                <h4 className="text-base md:text-lg lg:text-xl font-bold text-[#1a2e44] tracking-tight">{t.mgmtTitle}</h4>
                             </div>
-                            <ul className="space-y-6">
+                            <ul className="space-y-4 md:space-y-6">
                                 {(t.mgmtList || []).map((item, i) => (
-                                    <li key={i} className="flex gap-4 text-gray-500 font-semibold text-sm lg:text-base leading-relaxed border-l-2 border-[#0054A6] pl-6 transition-all hover:bg-blue-50/50 py-2 rounded-r-xl">
+                                    <li key={i} className="flex gap-3 md:gap-4 text-gray-500 font-semibold text-xs md:text-sm lg:text-base leading-relaxed border-l-2 border-[#0054A6] pl-4 md:pl-6 transition-all hover:bg-blue-50/50 py-2 rounded-r-xl">
                                         {item}
                                     </li>
                                 ))}
@@ -299,15 +304,15 @@ const MissionVision = ({ lang = 'ru' }) => {
                         </div>
 
                         {/* Workers */}
-                        <div className="bg-[#1a2e44] p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
-                            <Users className="absolute -right-10 -bottom-10 opacity-5" size={300} />
-                            <div className="flex items-center gap-5 mb-10 relative z-10">
-                                <div className="w-14 h-14 bg-[#0054A6] rounded-2xl flex items-center justify-center text-white"><Users size={28} /></div>
-                                <h4 className="text-lg lg:text-xl font-bold tracking-tight">{t.staffTitle}</h4>
+                        <div className="bg-[#1a2e44] p-6 md:p-10 rounded-[24px] md:rounded-[40px] text-white shadow-2xl relative overflow-hidden">
+                            <Users className="absolute -right-10 -bottom-10 opacity-5 w-[200px] h-[200px] md:w-[300px] md:h-[300px]" />
+                            <div className="flex items-center gap-4 md:gap-5 mb-6 md:mb-10 relative z-10">
+                                <div className="w-12 h-12 md:w-14 md:h-14 bg-[#0054A6] rounded-2xl flex items-center justify-center text-white"><Users className="w-6 h-6 md:w-7 md:h-7" /></div>
+                                <h4 className="text-base md:text-lg lg:text-xl font-bold tracking-tight">{t.staffTitle}</h4>
                             </div>
-                            <ul className="space-y-6 relative z-10">
+                            <ul className="space-y-4 md:space-y-6 relative z-10">
                                 {(t.staffList || []).map((item, i) => (
-                                    <li key={i} className="flex gap-4 text-gray-300 font-semibold text-sm lg:text-base leading-relaxed border-l-2 border-white/20 pl-6 transition-all hover:bg-white/5 py-2 rounded-r-xl">
+                                    <li key={i} className="flex gap-3 md:gap-4 text-gray-300 font-semibold text-xs md:text-sm lg:text-base leading-relaxed border-l-2 border-white/20 pl-4 md:pl-6 transition-all hover:bg-white/5 py-2 rounded-r-xl">
                                         {item}
                                     </li>
                                 ))}

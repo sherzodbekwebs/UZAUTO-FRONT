@@ -1,28 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Phone } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 
 const translations = {
-    uz: {
-        catalogBtn: "KATALOG",
-        contactBtn: "ALOQA",
-        title: "Kelajak yo'llari uchun qudratli yechimlar",
-        description: "UzAuto Trailer — og'ir yuk tashish sanoatida ishonchli hamkoringiz. Biz kuch va innovatsiyani birlashtiramiz."
-    },
-    ru: {
-        catalogBtn: "КАТАЛОГ",
-        contactBtn: "СВЯЗЬ",
-        title: "МОЩНЫЕ РЕШЕНИЯ ДЛЯ ДОРОГ БУДУЩЕГО",
-        description: "UzAuto Trailer — ваш надежный партнер в индустрии большегрузных перевозок. Мы объединяем силу и инновации."
-    },
-    en: {
-        catalogBtn: "CATALOG",
-        contactBtn: "CONTACT",
-        title: "POWERFUL SOLUTIONS FOR THE ROADS OF THE FUTURE",
-        description: "UzAuto Trailer is your reliable partner in the heavy haulage industry. We combine strength and innovation."
-    }
+    uz: { catalogBtn: "KATALOG", contactBtn: "ALOQA", title: "Kelajak yo'llari uchun qudratli yechimlar", description: "UzAuto Trailer — og'ir yuk tashish sanoatida ishonchli hamkoringiz. Biz kuch va innovatsiyani birlashtiramiz." },
+    ru: { catalogBtn: "КАТАЛОГ", contactBtn: "СВЯЗЬ", title: "МОЩНЫЕ РЕШЕНИЯ ДЛЯ ДОРОГ БУДУЩЕГО", description: "UzAuto Trailer — ваш надежный партнер в индустрии большегрузных перевозок. Мы объединяем силу и инновации." },
+    en: { catalogBtn: "CATALOG", contactBtn: "CONTACT", title: "POWERFUL SOLUTIONS FOR THE ROADS OF THE FUTURE", description: "UzAuto Trailer is your reliable partner in the heavy haulage industry. We combine strength and innovation." }
 };
+
+// 🛡️ Stil yordamchisi
+function cn(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
 
 const Hero = ({ lang = 'ru' }) => {
     const [bgImages, setBgImages] = useState([]);
@@ -31,16 +21,13 @@ const Hero = ({ lang = 'ru' }) => {
 
     const t = translations[lang] || translations.ru;
     const API_BASE_URL = import.meta.env.VITE_API_URL;
-    console.log("API Base URL:", API_BASE_URL);
-    
 
+    // 1. Backenddan ma'lumot olish
     useEffect(() => {
         const fetchImages = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/anniversary-sliders`);
+                const response = await axios.get(`${API_BASE_URL}/sliders`);
                 const activeImages = response.data.filter(item => item.isActive !== false);
-                console.log(response);
-                
                 setBgImages(activeImages);
                 setLoading(false);
             } catch (err) {
@@ -51,9 +38,12 @@ const Hero = ({ lang = 'ru' }) => {
         fetchImages();
     }, [API_BASE_URL]);
 
+    // 🚀 2. AVTOMATIK O'TISH MANTIQLARI (Timer)
     useEffect(() => {
         if (bgImages.length > 0) {
-            const timer = setInterval(() => { nextSlide(); }, 8000);
+            const timer = setInterval(() => {
+                nextSlide();
+            }, 5000); 
             return () => clearInterval(timer);
         }
     }, [current, bgImages]);
@@ -65,43 +55,40 @@ const Hero = ({ lang = 'ru' }) => {
 
     const currentImage = bgImages[current];
     const imagePath = currentImage.image.startsWith('http') ? currentImage.image : `${API_BASE_URL}${currentImage.image}`;
-    console.log("Current Image Path:", imagePath);
+
     return (
-        <section className="relative w-full h-screen overflow-hidden bg-[#0a0a0a] font-inter">
+        <section className="relative w-full flex flex-col lg:h-screen lg:block overflow-hidden bg-[#0a0a0a] font-inter">
 
-            {/* BACKGROUND LAYER */}
-            <AnimatePresence initial={false}>
-                <motion.div
-                    key={currentImage.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
-                    className="absolute inset-0 w-full h-full"
-                >
-                    {/* Gradient Overlay: Chap tomonda matn o'qilishi uchun qorong'ulik beradi */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/10 to-transparent z-10" />
+            {/* 📸 IMAGE AREA */}
+            <div className="relative w-full h-auto lg:h-full lg:absolute lg:inset-0 z-10">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentImage.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="w-full h-full"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent lg:bg-gradient-to-r lg:from-black/70 lg:via-black/20 lg:to-transparent z-10" />
+                        
+                        <img
+                            src={imagePath}
+                            alt="UzAuto Trailer"
+                            className="w-full h-auto lg:h-full object-contain lg:object-cover object-center lg:object-[75%_center]"
+                        />
+                    </motion.div>
+                </AnimatePresence>
+            </div>
 
-                    {/* RASM: Siz aytgan object-cover va o'ngga surish mantiqi */}
-                    <img
-                        src={imagePath}
-                        alt="UzAuto Trailer"
-                        /* 
-                           object-[75%_center] — rasmning 75% o'ng qismini markaz qilib oladi.
-                           Bu treylerni o'ng tomonda aniq ko'rsatadi va kesilib ketishini kamaytiradi.
-                        */
-                        className="w-full h-full object-cover object-[75%_center]"
-                    />
-                </motion.div>
-            </AnimatePresence>
-
-            {/* CONTENT LAYER */}
-            <div className="relative z-20 h-full max-w-[1440px] mx-auto px-6 lg:px-12 flex flex-col justify-center">
-                <div className="max-w-2xl">
+            {/* 📝 TEXT CONTENT AREA */}
+            {/* 🚀 pt-10 dan pt-6 ga o'zgartirildi (bu matnni 15-16px yuqoriga ko'taradi) */}
+            <div className="relative z-20 flex-1 lg:h-full max-w-[1600px] mx-auto px-6 lg:px-12 flex flex-col justify-start lg:justify-center items-center lg:items-start text-center lg:text-left bg-[#0a0a0a] lg:bg-transparent pt-6 pb-24 lg:py-0">
+                <div className="max-w-3xl">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-4xl lg:text-[54px] font-black text-white leading-[1.05] mb-6 uppercase drop-shadow-2xl"
+                        className="text-3xl sm:text-4xl lg:text-[54px] font-black text-white leading-tight lg:leading-[1.05] mb-4 lg:mb-6 uppercase drop-shadow-2xl"
                     >
                         {t.title}
                     </motion.h1>
@@ -110,48 +97,42 @@ const Hero = ({ lang = 'ru' }) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-sm lg:text-lg text-white/80 mb-10 max-w-lg font-medium leading-relaxed"
+                        className="text-sm lg:text-lg text-white/60 mb-8 lg:mb-10 max-w-lg font-medium leading-relaxed px-2 lg:px-0"
                     >
                         {t.description}
                     </motion.p>
 
-                    <div className="flex gap-4">
-                        <button className="bg-[#4478C3] hover:bg-blue-600 text-white px-10 py-3.5 rounded-sm font-bold transition-all text-[11px] tracking-widest cursor-pointer active:scale-95 shadow-lg">
+                    <div className="flex gap-4 w-full sm:w-auto px-4 lg:px-0">
+                        <button className="flex-1 sm:flex-none bg-[#0061A4] hover:bg-blue-600 text-white px-8 lg:px-12 py-3.5 lg:py-4 rounded-sm font-bold transition-all text-[11px] tracking-widest cursor-pointer active:scale-95 shadow-xl">
                             {t.catalogBtn}
                         </button>
-                        <button className="bg-[#E88B3A] hover:bg-[#d47a2e] text-white px-10 py-3.5 rounded-sm font-bold transition-all text-[11px] tracking-widest cursor-pointer active:scale-95 shadow-lg">
+                        <button className="flex-1 sm:flex-none bg-[#E88B3A] hover:bg-[#d47a2e] text-white px-8 lg:px-12 py-3.5 lg:py-4 rounded-sm font-bold transition-all text-[11px] tracking-widest cursor-pointer active:scale-95 shadow-xl">
                             {t.contactBtn}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* BOTTOM CONTROLS */}
-            <div className="absolute bottom-10 left-0 right-0 z-40 px-6 lg:px-12 flex justify-between items-center">
-
-                {/* Progress Indicators */}
-                <div className="flex gap-2">
+            {/* 🎮 CONTROLS AREA */}
+            <div className="absolute bottom-6 lg:bottom-12 left-0 right-0 z-40 px-6 lg:px-12 flex justify-between items-center pointer-events-none">
+                
+                <div className="flex gap-2 pointer-events-auto items-center">
                     {bgImages.map((_, idx) => (
                         <div
                             key={idx}
                             onClick={() => setCurrent(idx)}
-                            className={`h-[2px] cursor-pointer transition-all duration-500 ${idx === current ? 'w-10 bg-[#4478C3]' : 'w-5 bg-white/20'}`}
+                            className={`cursor-pointer transition-all duration-500 rounded-full ${idx === current ? 'w-8 lg:w-16 h-[3px] bg-[#0061A4]' : 'w-4 lg:w-8 h-[2px] bg-white/20'}`}
                         />
                     ))}
                 </div>
 
-                {/* Arrows & Phone */}
-                <div className="flex items-center gap-4">
-                    <div className="flex gap-2">
-                        <button onClick={prevSlide} className="w-10 h-10 flex items-center justify-center border border-white/20 rounded-full hover:bg-white/10 transition-all text-white cursor-pointer backdrop-blur-sm">
-                            <ChevronLeft size={20} />
-                        </button>
-                        <button onClick={nextSlide} className="w-10 h-10 flex items-center justify-center border border-white/20 rounded-full hover:bg-white/10 transition-all text-white cursor-pointer backdrop-blur-sm">
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
-
-                 
+                <div className="flex gap-3 pointer-events-auto">
+                    <button onClick={prevSlide} className="w-9 h-9 lg:w-12 lg:h-12 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/10 backdrop-blur-md transition-all">
+                        <ChevronLeft size={20} />
+                    </button>
+                    <button onClick={nextSlide} className="w-9 h-9 lg:w-12 lg:h-12 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/10 backdrop-blur-md transition-all">
+                        <ChevronRight size={20} />
+                    </button>
                 </div>
             </div>
         </section>

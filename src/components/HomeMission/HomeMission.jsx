@@ -11,6 +11,8 @@ import {
     Clock
 } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 const translations = {
     ru: {
         name: "ИП ООО «UzAuto Trailer»",
@@ -56,33 +58,53 @@ const translations = {
     }
 };
 
-const missionImages = ["/1.jpg", "/2.jpg", "/3.png", "/4.png", "/5.png"];
-
 const HomeMission = ({ lang = 'ru' }) => {
+    const [missionImages, setMissionImages] = useState(["/1.jpg", "/2.jpg", "/3.png", "/4.png", "/5.png"]);
     const [index, setIndex] = useState(0);
     const t = translations[lang] || translations.ru;
 
     useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/anniversary-sliders`);
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const fetchedImages = data.map(item => {
+                        const imgPath = item.image || item.url || item.photo || item;
+                        return imgPath.startsWith('http') ? imgPath : `${API_BASE_URL}${imgPath}`;
+                    });
+                    setMissionImages(fetchedImages);
+                }
+            } catch (error) {
+                console.error("Rasmlarni yuklashda xatolik yuz berdi:", error);
+            }
+        };
+
+        fetchImages();
+    }, []);
+
+    useEffect(() => {
+        if (missionImages.length === 0) return;
         const interval = setInterval(() => {
             setIndex((prev) => (prev + 1) % missionImages.length);
         }, 5000);
         return () => clearInterval(interval);
-    }, [index]);
+    }, [index, missionImages.length]);
 
     const next = () => setIndex((index + 1) % missionImages.length);
     const prev = () => setIndex((index - 1 + missionImages.length) % missionImages.length);
 
     return (
-        <section id="mission-section" className="w-full bg-[#F8FAFC] py-20 px-6 lg:px-16 font-inter overflow-hidden">
+        <section id="mission-section" className="w-full bg-[#F8FAFC] py-12 md:py-20 px-4 md:px-6 lg:px-16 font-inter overflow-hidden">
             <div className="max-w-[1440px] mx-auto">
 
-                {/* 1. CENTERED HEADER */}
-                <div className="text-center max-w-4xl mx-auto mb-16">
+                <div className="text-center max-w-4xl mx-auto mb-10 md:mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-4xl lg:text-5xl font-black text-[#1a2e44] mb-6 tracking-tighter"
+                        className="text-3xl md:text-4xl lg:text-5xl font-black text-[#1a2e44] mb-4 md:mb-6 tracking-tighter"
                     >
                         {t.name}
                     </motion.h2>
@@ -91,53 +113,62 @@ const HomeMission = ({ lang = 'ru' }) => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-lg lg:text-xl font-medium text-gray-500 leading-relaxed"
+                        className="text-base md:text-lg lg:text-xl font-medium text-gray-500 leading-relaxed"
                     >
                         {t.mission}
                     </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 items-center">
 
-                    {/* 2. IMAGE SECTION */}
+                    {/* IMAGE SECTION */}
                     <div className="lg:col-span-5 relative">
-                        <div className="relative aspect-[3/2] overflow-hidden rounded-[30px] shadow-xl bg-gray-200 border-4 border-white">
+                        <div className="relative aspect-[3/2] overflow-hidden rounded-[20px] md:rounded-[30px] shadow-xl bg-gray-200 border-2 md:border-4 border-white">
                             <AnimatePresence initial={false}>
-                                <motion.img
-                                    key={index}
-                                    src={missionImages[index]}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
+                                {missionImages.length > 0 && (
+                                    <motion.img
+                                        key={index}
+                                        src={missionImages[index]}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.6, ease: "easeInOut" }}
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    />
+                                )}
                             </AnimatePresence>
 
-                            <div className="absolute top-6 left-6 bg-black/20 backdrop-blur-md border border-white/30 px-5 py-4 rounded-2xl text-white shadow-lg z-10">
-                                <div className="text-4xl font-black italic leading-none">{t.badgeYear}</div>
-                                <div className="text-[9px] font-bold tracking-[2px] opacity-90 uppercase">{t.badgeMarket}</div>
+                            {/* IXCHAMLASHTIRILGAN BADGE (11 yillik yozuvi) */}
+                            <div className="absolute top-3 left-3 md:top-5 md:left-5 bg-black/30 backdrop-blur-md border border-white/30 px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl text-white shadow-lg z-10 flex flex-col justify-center items-center">
+                                {/* O'lchamlar ancha kichraytirildi */}
+                                <div className="text-xl md:text-3xl font-black italic leading-none">
+                                    {t.badgeYear}
+                                </div>
+                                <div className="text-[6px] md:text-[8px] font-bold tracking-widest opacity-90 uppercase mt-0.5 md:mt-1">
+                                    {t.badgeMarket}
+                                </div>
                             </div>
 
-                            <div className="absolute bottom-6 right-6 flex gap-2 z-10">
+                            {/* RESPONSIVE ARROWS (Knopkalar) */}
+                            <div className="absolute bottom-3 right-3 md:bottom-5 md:right-5 flex gap-1.5 md:gap-2 z-10">
                                 <button
                                     onClick={prev}
-                                    className="p-2.5 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md rounded-full transition-all cursor-pointer shadow-lg active:scale-90"
+                                    className="p-1.5 md:p-2 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md rounded-full transition-all cursor-pointer shadow-lg active:scale-90"
                                 >
-                                    <ChevronLeft size={20} />
+                                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                                 </button>
                                 <button
                                     onClick={next}
-                                    className="p-2.5 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md rounded-full transition-all cursor-pointer shadow-lg active:scale-90"
+                                    className="p-1.5 md:p-2 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md rounded-full transition-all cursor-pointer shadow-lg active:scale-90"
                                 >
-                                    <ChevronRight size={20} />
+                                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    {/* 3. FEATURES SECTION */}
-                    <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {/* FEATURES SECTION */}
+                    <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
                         {t.features.map((item, i) => (
                             <motion.div
                                 key={i}
@@ -145,15 +176,15 @@ const HomeMission = ({ lang = 'ru' }) => {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.05 }}
-                                className="group bg-white p-5 rounded-[24px] border border-transparent hover:border-blue-100 hover:shadow-lg transition-all duration-300 text-center flex flex-col items-center"
+                                className="group bg-white p-4 md:p-5 rounded-[20px] md:rounded-[24px] border border-transparent hover:border-blue-100 hover:shadow-lg transition-all duration-300 text-center flex flex-col items-center"
                             >
-                                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#0054A6] transition-colors">
-                                    <item.icon className="w-5 h-5 text-[#0054A6] group-hover:text-white transition-colors" />
+                                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-3 md:mb-4 group-hover:bg-[#0054A6] transition-colors">
+                                    <item.icon className="w-4 h-4 md:w-5 md:h-5 text-[#0054A6] group-hover:text-white transition-colors" />
                                 </div>
-                                <h3 className="text-sm font-bold text-[#1a2e44] mb-1 group-hover:text-[#0054A6]">
+                                <h3 className="text-xs md:text-sm font-bold text-[#1a2e44] mb-1 group-hover:text-[#0054A6]">
                                     {item.title}
                                 </h3>
-                                <p className="text-[11px] text-gray-400 leading-tight">
+                                <p className="text-[10px] md:text-[11px] text-gray-400 leading-tight">
                                     {item.text}
                                 </p>
                             </motion.div>

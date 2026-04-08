@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    MapPin, Clock, Phone, Mail, 
-    Copy, ExternalLink, Send, 
+import {
+    MapPin, Clock, Phone, Mail,
+    Copy, ExternalLink, Send,
     Globe, Instagram, Facebook, Youtube, Send as TelegramIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -57,6 +57,31 @@ const translations = {
         view_map: "Xaritada ochish",
         map_title: "Xaritadagi joylashuvimiz",
         social_title: "Ijtimoiy tarmoqlarimiz"
+    },
+    en: {
+        title: "Contacts",
+        subtitle: "Contact us in any convenient way or visit our office",
+        our_address: "Our address",
+        headOffice: "Head Office",
+        production: "Production",
+        callCenter: "Unified call center",
+        email_label: "For inquiries",
+        workHours: "Working hours",
+        weekdays_title: "Monday - Friday",
+        weekdays_time: "09:00 - 18:00",
+        weekend: "Saturday - Sunday",
+        closed: "Closed",
+        tashkent: "Tashkent city, Mirzo-Ulugbek street, 30",
+        samarkand: "Samarkand region, Jambay district, Jambay city, Tashkent street, 2",
+        form_title: "Write to us",
+        name_label: "Your name",
+        phone_label: "Phone number",
+        msg_placeholder: "Enter your message...",
+        send_btn: "Send message",
+        copy: "Copy",
+        view_map: "Open in maps",
+        map_title: "Our location on the map",
+        social_title: "Our social networks"
     }
 };
 
@@ -86,7 +111,7 @@ const Contacts = ({ lang = 'ru' }) => {
     return (
         <div className="pt-32 pb-20 bg-[#F8FAFC] font-inter text-[#1a2e44]">
             <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-                
+
                 <div className="text-center mb-16 space-y-4">
                     <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="text-5xl lg:text-6xl font-bold tracking-tight italic">
                         {t.title}
@@ -95,10 +120,10 @@ const Contacts = ({ lang = 'ru' }) => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-                    
+
                     {/* LEFT COLUMN */}
                     <div className="lg:col-span-7 space-y-6">
-                        
+
                         {/* Address Card */}
                         <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-6">
                             <div className="flex items-center gap-4">
@@ -107,7 +132,7 @@ const Contacts = ({ lang = 'ru' }) => {
                                 </div>
                                 <h3 className="text-lg font-bold uppercase tracking-wider">{t.our_address}</h3>
                             </div>
-                            
+
                             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                                 <button onClick={() => setActiveLocation('tashkent')} className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeLocation === 'tashkent' ? 'bg-[#0061A4] text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>{t.headOffice}</button>
                                 <button onClick={() => setActiveLocation('samarkand')} className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeLocation === 'samarkand' ? 'bg-[#0061A4] text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>{t.production}</button>
@@ -140,8 +165,8 @@ const Contacts = ({ lang = 'ru' }) => {
                                 <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Globe size={14} className="text-[#0061A4]" /> {t.social_title}</div>
                                 <div className="grid grid-cols-2 gap-4 mt-6">
                                     {socialLinks.map((social, i) => (
-                                        <a key={i} href={social.url} target="_blank" rel="noreferrer" 
-                                           className={`flex items-center justify-center p-4 bg-gray-50 rounded-2xl text-gray-400 ${social.color} hover:text-white transition-all duration-300 shadow-sm`}>
+                                        <a key={i} href={social.url} target="_blank" rel="noreferrer"
+                                            className={`flex items-center justify-center p-4 bg-gray-50 rounded-2xl text-gray-400 ${social.color} hover:text-white transition-all duration-300 shadow-sm`}>
                                             {social.icon}
                                         </a>
                                     ))}

@@ -1,104 +1,153 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import API, { API_URL } from '../../api/axios'; 
+import { useLanguage } from '../../context/LanguageContext';
 
 const translations = {
-    ru: { clients: "НАШИ КЛИЕНТЫ", partners: "НАШИ ПАРТНЕРЫ" },
-    uz: { clients: "BIZNING MIJOZLAR", partners: "BIZNING HAMKORLAR" },
-    en: { clients: "OUR CLIENTS", partners: "OUR PARTNERS" }
+    ru: { clients: "Наши клиенты", partners: "Наши партнеры" },
+    uz: { clients: "Бизнинг мижозлар", partners: "Бизнинг ҳамкорлар" },
+    en: { clients: "Our clients", partners: "Our partners" }
 };
 
-const Partners = ({ lang = 'ru' }) => {
+const Partners = () => {
+    const { lang } = useLanguage();
     const t = translations[lang] || translations.ru;
 
-    // Rasm formatlarini to'g'ri ko'rsatish uchun ro'yxatni aniq yozamiz
-    // klient6.png va part7.png qolganlari .jpg
     const [clients, setClients] = useState([]);
     const [partners, setPartners] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const clientsList = Array.from({ length: 19 }, (_, i) => {
-            const id = i + 1;
-            return { id, image: id === 6 ? `/klient${id}.png` : `/klient${id}.jpg` };
-        });
-
-        const partnersList = Array.from({ length: 15 }, (_, i) => {
-            const id = i + 1;
-            return { id, image: id === 7 ? `/part${id}.png` : `/part${id}.jpg` };
-        });
-
-        setClients(clientsList);
-        setPartners(partnersList);
+        const fetchLogos = async () => {
+            try {
+                setLoading(true);
+                const [cRes, pRes] = await Promise.all([
+                    API.get('/clients'),
+                    API.get('/partners')
+                ]);
+                setClients(cRes.data.filter(i => i.isActive));
+                setPartners(pRes.data.filter(i => i.isActive));
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLogos();
     }, []);
 
-    const InfiniteRow = ({ title, items, direction = "left" }) => {
-        const [isPaused, setIsPaused] = useState(false);
-        const timerRef = useRef(null);
+    const LogoRow = ({ title, items, autoDir = "right" }) => {
+        const scrollRef = useRef(null);
 
-        const handleDragStart = () => {
-            setIsPaused(true);
-            if (timerRef.current) clearTimeout(timerRef.current);
+        // 🚀 ZANJIRNI ULASH (INFINITE) LOGIKASI
+        const handleScroll = () => {
+            const container = scrollRef.current;
+            if (!container) return;
+
+            const contentWidth = container.scrollWidth / 3; // 3 marta ko'paytirilgan bo'ladi
+
+            // O'ng chetga yetganda o'rtaga sakrash
+            if (container.scrollLeft >= contentWidth * 2) {
+                container.scrollLeft -= contentWidth;
+            }
+            // Chap chetga yetganda o'rtaga sakrash
+            else if (container.scrollLeft <= 0) {
+                container.scrollLeft += contentWidth;
+            }
         };
 
-        const handleDragEnd = () => {
-            timerRef.current = setTimeout(() => {
-                setIsPaused(false);
-            }, 4000);
+        const scrollManual = (direction) => {
+            if (scrollRef.current) {
+                const container = scrollRef.current;
+                const card = container.querySelector('.logo-card');
+                if (!card) return;
+
+                const step = card.offsetWidth + 24; // Karta + gap (24px)
+                const scrollAmount = direction === 'right' ? step : -step;
+                
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
         };
+
+        // Boshlang'ich nuqtani o'rtaga surish
+        useEffect(() => {
+            if (scrollRef.current && items.length > 0) {
+                const container = scrollRef.current;
+                const contentWidth = container.scrollWidth / 3;
+                container.scrollLeft = contentWidth;
+            }
+        }, [items]);
+
+        // Avtomatik yurish
+        useEffect(() => {
+            if (items.length === 0) return;
+            const interval = setInterval(() => {
+                scrollManual(autoDir);
+            }, 3500);
+            return () => clearInterval(interval);
+        }, [items, autoDir]);
+
+        if (!items || items.length === 0) return null;
 
         return (
-            <div className="mb-10 st:mb-0 select-none w-full">
-                <div className="flex flex-col items-center mb-10 px-6">
-                    <h3 className="text-[12px] lg:text-[14px] font-semibold uppercase tracking-[0.5em] text-[#1a2e44] mb-4 text-center">
+            <div className="relative w-full h-36 lg:h-44 flex items-center mb-4 last:mb-0 border-y border-gray-100 group">
+                
+                {/* O'ZGARISH FAQAT SHU YERDA: w-[120px] qilib telefonda ixchamlashtirildi */}
+                <div 
+                    className="absolute left-0 top-0 bottom-0 z-20 w-[120px] md:w-[180px] lg:w-[220px] bg-[#0054A6] flex flex-col items-center justify-center text-white"
+                    style={{ clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)' }}
+                >
+                    {/* Yozuv o'lchami text-[10px] va px-1 qilib telefonga moslandi */}
+                    <h3 className="text-[10px] md:text-sm lg:text-base font-bold uppercase tracking-tight text-center px-1 md:px-4 leading-tight mb-2 md:mb-3 pr-4 md:pr-4">
                         {title}
                     </h3>
-                    <div className="h-[1.5px] w-20 bg-[#0054A6] rounded-full"></div>
+                    
+                    {/* Knopkalar o'rtasidagi masofa (gap-3) telefonda qisqartirildi */}
+                    <div className="flex items-center gap-3 md:gap-6 pr-3 md:pr-0">
+                        <button onClick={() => scrollManual('left')} className="hover:scale-125 transition-all active:opacity-50 cursor-pointer">
+                            {/* size={24} o'rniga responsive o'lcham berildi */}
+                            <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
+                        </button>
+                        <button onClick={() => scrollManual('right')} className="hover:scale-125 transition-all active:opacity-50 cursor-pointer">
+                            <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
+                        </button>
+                    </div>
                 </div>
 
-                <div className="relative w-full cursor-grab active:cursor-grabbing overflow-hidden">
-                    {/* Yon tomondagi xiralashish effektlari */}
-                    <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#F8FAFC] to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#F8FAFC] to-transparent z-10 pointer-events-none" />
-
-                    <motion.div
-                        className="flex items-center w-max"
-                        // FOIZLI SILJISH: Har qanday kenglikda ishlaydi
-                        animate={isPaused ? {} : {
-                            x: direction === "left" ? ["0%", "-50%"] : ["-50%", "0%"]
-                        }}
-                        transition={{
-                            duration: 80, // Tezlikni shu yerdan sozlashingiz mumkin
-                            repeat: Infinity,
-                            ease: "linear"
-                        }}
-                        drag="x"
-                        onDragStart={handleDragStart}
-                        onDragEnd={handleDragEnd}
-                    >
-                        {/* 4 marta ko'paytirish cheksizlik uchun yetarli */}
-                        {[...items, ...items, ...items, ...items].map((item, i) => (
-                            <div key={i}>
-                                {/* BOX SHADOW QO'SHILGAN KARTA */}
-                                <div className="h-24 lg:h-32 w-auto flex items-center ">
-                                    <img
-                                        src={item.image}
-                                        alt="brand logo"
-                                        className="h-full w-auto object-contain pointer-events-none"
-                                        loading="lazy"
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </motion.div>
+                {/* Ko'k shakl qisqargani uchun, rasmlar joylashgan qutini chapdagi masofasi ham unga moslandi (ml-[90px]) */}
+                <div 
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    className="flex-1 h-full overflow-hidden flex items-center gap-6 px-10 ml-[90px] md:ml-[140px] lg:ml-[180px] scroll-smooth"
+                    style={{ backgroundColor: '#fcfdfe' }}
+                >
+                    {/* 🚀 ZANJIR UCHUN RO'YXATNI 3 MARTA KO'PAYTIRAMIZ */}
+                    {[...items, ...items, ...items].map((item, i) => (
+                        <div 
+                            key={i} 
+                            className="logo-card w-32 h-27 lg:w-40 lg:h-auto bg-white flex items-center justify-center p-1 shrink-0 shadow-sm border border-gray-100 rounded-md transition-transform hover:scale-105"
+                        >
+                            <img
+                                src={`${API_URL}${item.logo}`} 
+                                alt={item.name}
+                                className="w-full h-full object-contain pointer-events-none"
+                                loading="lazy"
+                            />
+                        </div>
+                    ))}
                 </div>
             </div>
         );
     };
 
+    if (loading && (clients.length === 0 && partners.length === 0)) return null;
+
     return (
-        <section className="w-full py-15 bg-[#F8FAFC] font-inter overflow-hidden border-t border-gray-100">
-            <div className="w-full">
-                <InfiniteRow title={t.clients} items={clients} direction="left" />
-                <InfiniteRow title={t.partners} items={partners} direction="right" />
+        <section className="w-full bg-white border-y-[6px] border-[#0054A6] overflow-hidden py-1 font-inter text-[#1a2e44]">
+            <div className="max-w-full">
+                {/* Mijozlar o'ngga/chapga ulanib yuradi */}
+                <LogoRow title={t.clients} items={clients} autoDir="right" />
+                <LogoRow title={t.partners} items={partners} autoDir="left" />
             </div>
         </section>
     );

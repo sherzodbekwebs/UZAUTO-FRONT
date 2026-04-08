@@ -80,7 +80,7 @@ const Achievements = ({ lang = 'ru' }) => {
     }
 
     return (
-        <div className="pt-24 bg-white font-inter overflow-hidden min-h-screen">
+        <div className="pt-0 bg-white font-inter overflow-hidden min-h-screen">
 
             {/* 1. HERO SECTION */}
             <section className="relative h-[400px] flex items-center bg-[#0a1425] overflow-hidden">

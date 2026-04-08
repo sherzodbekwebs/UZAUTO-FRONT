@@ -56,7 +56,7 @@ const ContactModal = ({ lang = 'ru' }) => {
             timer1 = setTimeout(() => {
                 setIsOpen(true);
                 sessionStorage.setItem('modalFirstShown', 'true');
-            }, 10000); // 10 soniya
+            }, 10000);
         }
 
         const secondShown = sessionStorage.getItem('modalSecondShown');
@@ -91,15 +91,11 @@ const ContactModal = ({ lang = 'ru' }) => {
         setIsLoading(true);
 
         const currentPageUrl = window.location.href;
-
-        // --- O'ZGARTIRILGAN QISM ---
-        // Linkni ` ` belgisiga o'radik, shunda ichidagi _ (pastki chiziq) xato bermaydi
         const message = `🔔 *НОВАЯ ЗАЯВКА С САЙТА*\n\n` +
             `👤 *Имя:* ${formData.name}\n` +
             `📞 *Телефон:* ${formData.phone}\n` +
             `🌐 *Язык интерфейса:* ${lang.toUpperCase()}\n\n` +
             `📍 *Отправлено со страницы:* \n\`${currentPageUrl}\``;
-        // ---------------------------
 
         try {
             const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -122,32 +118,29 @@ const ContactModal = ({ lang = 'ru' }) => {
                     setIsLoading(false);
                 }, 3500);
             } else {
-                // Agar xato bo'lsa, konsolda ko'rish uchun
-                const err = await response.json();
-                console.error("Telegram Error:", err);
-                setIsLoading(false); // Xato bo'lsa ham loadingni to'xtatish
+                setIsLoading(false);
             }
         } catch (error) {
-            console.error("Fetch Error:", error);
             setIsLoading(false);
         }
     };
 
     return (
         <>
+            {/* Floating Button - Mobil qurilmada biroz kichikroq */}
             <motion.button
                 onClick={() => setIsOpen(true)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="fixed bottom-8 right-8 z-[200] w-16 h-16 bg-[#0054A6] text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+                className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[200] w-14 h-14 sm:w-16 sm:h-16 bg-[#0054A6] text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer"
             >
                 <span className="absolute inset-0 rounded-full bg-[#0054A6] animate-ping opacity-20"></span>
-                <Phone className="w-7 h-7 relative z-10" />
+                <Phone className="w-6 h-6 sm:w-7 sm:h-7 relative z-10" />
             </motion.button>
 
             <AnimatePresence>
                 {isOpen && (
-                    <div className="fixed inset-0 z-[300] flex items-center justify-center px-4">
+                    <div className="fixed inset-0 z-[300] flex items-center justify-center px-4 sm:px-6">
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -157,38 +150,36 @@ const ContactModal = ({ lang = 'ru' }) => {
                         />
 
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                            className="relative bg-white w-full max-w-[440px] rounded-[40px] overflow-hidden shadow-2xl"
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="relative bg-white w-full max-w-[440px] rounded-3xl sm:rounded-[40px] overflow-hidden shadow-2xl"
                         >
                             <div className="h-1.5 w-full bg-[#0054A6]" />
 
-                            <div className="p-10 lg:p-12">
+                            {/* Paddinglar mobil uchun p-6, desktop uchun p-10 qilib o'zgartirildi */}
+                            <div className="p-6 sm:p-10 lg:p-12">
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="absolute top-8 right-8 text-gray-400 hover:text-[#1a2e44] transition-colors p-2 cursor-pointer"
+                                    className="absolute top-4 right-4 sm:top-8 sm:right-8 text-gray-400 hover:text-[#1a2e44] transition-colors p-2 cursor-pointer"
                                 >
-                                    <X size={22} />
+                                    <X size={20} sm={22} />
                                 </button>
 
                                 {!isSent ? (
                                     <form onSubmit={handleSubmit} className="flex flex-col">
-                                        <div className="mb-10 text-center">
-                                            {/* Novosti sarlavhasi kabi font-semibold va tracking-tight qilindi */}
-                                            <h2 className="text-2xl lg:text-3xl font-semibold text-[#1a2e44] mb-3 tracking-tight">
+                                        <div className="mb-6 sm:mb-10 text-center">
+                                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#1a2e44] mb-2 sm:mb-3 tracking-tight">
                                                 {t.title}
                                             </h2>
-                                            {/* font-medium o'rnatildi */}
-                                            <p className="text-gray-500 text-sm font-medium leading-relaxed">
+                                            <p className="text-gray-500 text-xs sm:text-sm font-medium leading-relaxed">
                                                 {t.subtitle}
                                             </p>
                                         </div>
 
-                                        <div className="space-y-4 mb-10">
+                                        <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-10">
                                             <div className="relative flex items-center">
-                                                <User className="absolute left-6 text-gray-400 w-5 h-5" />
-                                                {/* font-medium (Novosti date kabi) */}
+                                                <User className="absolute left-5 sm:left-6 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                                                 <input
                                                     required
                                                     type="text"
@@ -196,11 +187,11 @@ const ContactModal = ({ lang = 'ru' }) => {
                                                     placeholder={t.namePlaceholder}
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    className="w-full bg-[#F8FAFC] border border-gray-100 rounded-3xl px-14 py-5 text-sm font-medium text-[#1a2e44] outline-none focus:bg-white focus:border-[#0054A6]/30 transition-all"
+                                                    className="w-full bg-[#F8FAFC] border border-gray-100 rounded-2xl sm:rounded-3xl px-12 sm:px-14 py-4 sm:py-5 text-sm font-medium text-[#1a2e44] outline-none focus:bg-white focus:border-[#0054A6]/30 transition-all"
                                                 />
                                             </div>
                                             <div className="relative flex items-center">
-                                                <Phone className="absolute left-6 text-gray-400 w-5 h-5" />
+                                                <Phone className="absolute left-5 sm:left-6 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                                                 <input
                                                     required
                                                     type="tel"
@@ -209,7 +200,7 @@ const ContactModal = ({ lang = 'ru' }) => {
                                                     value={formData.phone}
                                                     onFocus={handlePhoneFocus}
                                                     onChange={handlePhoneChange}
-                                                    className="w-full bg-[#F8FAFC] border border-gray-100 rounded-3xl px-14 py-5 text-sm font-medium text-[#1a2e44] outline-none focus:bg-white focus:border-[#0054A6]/30 transition-all"
+                                                    className="w-full bg-[#F8FAFC] border border-gray-100 rounded-2xl sm:rounded-3xl px-12 sm:px-14 py-4 sm:py-5 text-sm font-medium text-[#1a2e44] outline-none focus:bg-white focus:border-[#0054A6]/30 transition-all"
                                                 />
                                             </div>
                                         </div>
@@ -217,37 +208,34 @@ const ContactModal = ({ lang = 'ru' }) => {
                                         <button
                                             type="submit"
                                             disabled={isLoading}
-                                            className="relative w-full bg-[#0054A6] hover:bg-[#004488] disabled:bg-gray-400 text-white py-5 rounded-3xl transition-all active:scale-[0.98] flex items-center justify-center gap-3 group cursor-pointer shadow-xl shadow-blue-900/10"
+                                            className="relative w-full bg-[#0054A6] hover:bg-[#004488] disabled:bg-gray-400 text-white py-4 sm:py-5 rounded-2xl sm:rounded-3xl transition-all active:scale-[0.98] flex items-center justify-center gap-3 group cursor-pointer shadow-xl shadow-blue-900/10"
                                         >
                                             {isLoading ? (
                                                 <Loader2 className="w-5 h-5 animate-spin" />
                                             ) : (
                                                 <>
-                                                    {/* font-semibold (Novosti sarlavhasi kabi) */}
-                                                    <span className="uppercase tracking-widest text-xs font-semibold">{t.button}</span>
+                                                    <span className="uppercase tracking-widest text-[10px] sm:text-xs font-semibold">{t.button}</span>
                                                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                                 </>
                                             )}
                                         </button>
 
-                                        <div className="mt-8 flex items-center justify-center gap-2 text-gray-400 text-center">
-                                            <ShieldCheck size={14} className="shrink-0" />
-                                            {/* font-medium (Novosti desc kabi) */}
-                                            <span className="text-[10px] font-medium uppercase tracking-widest">{t.privacy}</span>
+                                        <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2 text-gray-400 text-center">
+                                            <ShieldCheck size={12} className="shrink-0" />
+                                            <span className="text-[9px] sm:text-[10px] font-medium uppercase tracking-widest">{t.privacy}</span>
                                         </div>
                                     </form>
                                 ) : (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="flex flex-col items-center text-center py-6"
+                                        className="flex flex-col items-center text-center py-4 sm:py-6"
                                     >
-                                        <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-8">
-                                            <CheckCircle2 size={56} className="text-green-500" />
+                                        <div className="w-16 h-16 sm:w-24 sm:h-24 bg-green-50 rounded-full flex items-center justify-center mb-6 sm:mb-8">
+                                            <CheckCircle2 size={40} className="sm:size-[56px] text-green-500" />
                                         </div>
-                                        {/* Muvaffaqiyat sarlavhasi semibold */}
-                                        <h3 className="text-2xl font-semibold text-[#1a2e44] mb-3">{t.success}</h3>
-                                        <p className="text-gray-500 text-sm font-medium px-4 leading-relaxed">
+                                        <h3 className="text-xl sm:text-2xl font-semibold text-[#1a2e44] mb-2 sm:mb-3">{t.success}</h3>
+                                        <p className="text-gray-500 text-xs sm:text-sm font-medium px-2 sm:px-4 leading-relaxed">
                                             {t.successDesc}
                                         </p>
                                     </motion.div>

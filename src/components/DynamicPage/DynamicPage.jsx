@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import API from '../../Api/axios.js';
+import API from '../../Api/axios'; // Markaziy API importi
 
 const DynamicPage = ({ lang, slug: propSlug }) => { // <-- propSlug ni qabul qilamiz
     const { slug: paramSlug } = useParams();

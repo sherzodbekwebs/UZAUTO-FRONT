@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import buildingImg from '../../../public/bgcompany.png';
 
+// translations o'sha-o'sha...
 const translations = {
     ru: {
         title: "ПРОИЗВОДСТВЕННЫЕ ПОКАЗАТЕЛИ",
@@ -59,58 +60,54 @@ const ProductionStats = ({ lang = 'ru' }) => {
     const t = translations[lang] || translations.ru;
 
     return (
-        <section id="stats-section" className="relative w-full py-32 overflow-hidden bg-[#F8FAFC]">
-            {/* Background Image - Yorug' va xira qilingan */}
+        <section id="stats-section" className="relative w-full py-16 lg:py-32 overflow-hidden bg-[#F8FAFC]">
             <div className="absolute inset-0 z-0">
                 <img
                     src={buildingImg}
-                    className="w-full h-full object-cover opacity-20 "
+                    className="w-full h-full object-cover opacity-20"
                     alt="UzAuto Trailer Factory"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b " />
+                <div className="absolute inset-0 bg-gradient-to-b" />
             </div>
 
-            <div className="relative z-10 max-w-[1440px] mx-auto px-8 lg:px-16">
-
-                {/* Minimalist Title */}
-                <div className="mb-20 text-center lg:text-left">
+            <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-16">
+                
+                {/* Title qismi */}
+                <div className="mb-12 lg:mb-20 text-center lg:text-left">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         className="flex items-center justify-center lg:justify-start gap-4 mb-4"
                     >
-                        <div className="w-12 h-[2px] bg-[#0054A6]" />
-                        {/* font-bold -> font-semibold */}
-                        <span className="text-[#0054A6] font-semibold tracking-[0.3em] text-[10px] uppercase">
+                        <div className="w-8 lg:w-12 h-[2px] bg-[#0054A6]" />
+                        <span className="text-[#0054A6] font-semibold tracking-[0.2em] text-[9px] sm:text-[10px] uppercase">
                             UzAuto Trailer Statistics
                         </span>
                     </motion.div>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="text-[#1a2e44] text-3xl lg:text-5xl font-semibold tracking-tighter"
+                        className="text-[#1a2e44] text-2xl md:text-3xl lg:text-5xl font-semibold tracking-tighter"
                     >
                         {t.title}
                     </motion.h2>
                 </div>
 
-                {/* Stats Grid - Yorug' va toza dizayn */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12 lg:gap-8">
+                {/* Stats Grid - O'ZGARISH SHUYERDA: grid-cols-2 bo'ldi */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10 lg:gap-8">
                     {t.stats.map((stat, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="flex flex-col border-l border-gray-200 pl-8 hover:border-[#0054A6] transition-all duration-500 group"
+                            className="flex flex-col border-l border-gray-200 pl-4 sm:pl-8 hover:border-[#0054A6] transition-all duration-500 group"
                         >
-                            {/* font-black -> font-semibold */}
-                            <div className="text-[#0054A6] text-4xl lg:text-5xl font-semibold mb-3 flex items-baseline gap-1 group-hover:scale-105 transition-transform origin-left">
+                            <div className="text-[#0054A6] text-2xl sm:text-4xl lg:text-5xl font-semibold mb-2 flex items-baseline gap-1 group-hover:scale-105 transition-transform origin-left">
                                 <Counter value={stat.value} />
-                                <span className="text-xl font-bold">+</span>
+                                <span className="text-lg font-bold">+</span>
                             </div>
-                            {/* font-bold -> font-medium */}
-                            <p className="text-[#4b5563] text-xs lg:text-[13px] font-medium uppercase tracking-wider leading-snug max-w-[180px]">
+                            <p className="text-[#4b5563] text-[10px] sm:text-xs lg:text-[13px] font-medium uppercase tracking-wider leading-tight max-w-[140px] sm:max-w-[180px]">
                                 {stat.label}
                             </p>
                         </motion.div>

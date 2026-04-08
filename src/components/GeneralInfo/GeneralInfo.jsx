@@ -213,7 +213,6 @@ const translations = {
 const GeneralInfo = ({ lang = 'ru' }) => {
     const t = translations[lang] || translations.ru;
     
-    // States
     const [selectedImg, setSelectedImg] = useState(null);
     const [currentServiceIdx, setCurrentServiceIdx] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -225,7 +224,6 @@ const GeneralInfo = ({ lang = 'ru' }) => {
 
     useEffect(() => { window.scrollTo(0, 0); }, []);
 
-    // --- AVTOMATIK O'TISH MANTIQI ---
     useEffect(() => {
         if (isLightboxOpen || !isAutoPlaying) {
             if (autoSlideRef.current) clearInterval(autoSlideRef.current);
@@ -239,17 +237,23 @@ const GeneralInfo = ({ lang = 'ru' }) => {
         return () => clearInterval(autoSlideRef.current);
     }, [isLightboxOpen, isAutoPlaying, serviceImages.length]);
 
-    // --- MANUAL NAV ---
     const handleNav = (direction, e) => {
         if (e) e.stopPropagation();
         
         setIsAutoPlaying(false); 
         if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
 
+        let nextIdx;
         if (direction === 'next') {
-            setCurrentServiceIdx((prev) => (prev + 1) % serviceImages.length);
+            nextIdx = (currentServiceIdx + 1) % serviceImages.length;
         } else {
-            setCurrentServiceIdx((prev) => (prev - 1 + serviceImages.length) % serviceImages.length);
+            nextIdx = (currentServiceIdx - 1 + serviceImages.length) % serviceImages.length;
+        }
+        
+        setCurrentServiceIdx(nextIdx);
+        
+        if (isLightboxOpen && serviceImages.includes(selectedImg)) {
+            setSelectedImg(serviceImages[nextIdx]);
         }
 
         resumeTimeoutRef.current = setTimeout(() => {
@@ -266,72 +270,76 @@ const GeneralInfo = ({ lang = 'ru' }) => {
         }, 3000);
     };
 
+    const isGalleryImg = serviceImages.includes(selectedImg);
+
     return (
-        <div className="pt-24 bg-white font-inter">
+        <div className="pt-0 bg-white font-inter">
             {/* 1. HERO */}
-            <section className="relative h-[450px] flex items-center justify-center overflow-hidden" style={{ backgroundImage: `url(${uzautobg})`, backgroundSize: '100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+            <section className="relative h-[300px] md:h-[450px] flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${uzautobg})` }}>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20"></div>
                 <div className="relative z-10 text-center px-6">
-                    <h1 className="text-4xl lg:text-6xl font-semibold text-white uppercase">{t.heroTitle}</h1>
+                    <h1 className="text-3xl md:text-4xl lg:text-6xl font-semibold text-white uppercase">{t.heroTitle}</h1>
                 </div>
             </section>
 
-            <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-20 pb-0">
+            <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 py-12 md:py-20 pb-0">
                 
                 {/* 2. SECTION: INTRO */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 mb-16 md:mb-32 items-center">
                     <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                        <h2 className="text-3xl lg:text-4xl font-semibold text-[#1a2e44] mb-8">{t.mainTitle}</h2>
-                        <div className="text-gray-600 text-lg leading-relaxed text-justify space-y-6"><p>{t.description}</p></div>
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-[#1a2e44] mb-4 md:mb-8">{t.mainTitle}</h2>
+                        <div className="text-gray-600 text-base md:text-lg leading-relaxed text-justify space-y-6"><p>{t.description}</p></div>
                     </motion.div>
-                    <div className="rounded-3xl overflow-hidden shadow-2xl h-[500px] border-8 border-gray-50 cursor-pointer" onClick={() => { setSelectedImg(uzautobg); setIsLightboxOpen(true); }}>
+                    <div className="rounded-[20px] md:rounded-3xl overflow-hidden shadow-2xl h-[300px] md:h-[500px] border-4 md:border-8 border-gray-50 cursor-pointer" onClick={() => { setSelectedImg(uzautobg); setIsLightboxOpen(true); }}>
                         <img src={uzautobg} className="w-full h-full object-cover" alt="Production" />
                     </div>
                 </div>
 
                 {/* 3. SECTION: PLANT */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32 items-center">
-                    <div className="order-2 lg:order-1 rounded-3xl overflow-hidden shadow-2xl h-[450px] border-8 border-gray-50 cursor-pointer" onClick={() => { setSelectedImg(uzautobg1); setIsLightboxOpen(true); }}>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 mb-16 md:mb-32 items-center">
+                    <div className="order-2 lg:order-1 rounded-[20px] md:rounded-3xl overflow-hidden shadow-2xl h-[300px] md:h-[450px] border-4 md:border-8 border-gray-50 cursor-pointer" onClick={() => { setSelectedImg(uzautobg1); setIsLightboxOpen(true); }}>
                         <img src={uzautobg1} className="w-full h-full object-cover" alt="Plant" />
                     </div>
-                    <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="order-1 lg:order-2 bg-[#F8FAFC] p-12 rounded-[40px] border border-gray-100 h-full flex flex-col justify-center">
-                        <div className="flex items-center gap-4 mb-8">
-                            <Building2 className="text-[#0054A6]" size={32} />
-                            <h3 className="text-2xl font-semibold text-[#1a2e44]">{t.plant.title}</h3>
+                    <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="order-1 lg:order-2 bg-[#F8FAFC] p-6 md:p-12 rounded-[24px] md:rounded-[40px] border border-gray-100 h-full flex flex-col justify-center">
+                        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+                            <Building2 className="text-[#0054A6] w-6 h-6 md:w-8 md:h-8" />
+                            <h3 className="text-xl md:text-2xl font-semibold text-[#1a2e44]">{t.plant.title}</h3>
                         </div>
                         <ul className="space-y-4 text-gray-700 font-medium">
                             {t.plant.details.map((item, i) => (
-                                <li key={i} className="flex gap-4 text-[15px]"><CheckCircle2 size={18} className="text-[#0054A6] shrink-0" /> {item}</li>
+                                <li key={i} className="flex gap-3 md:gap-4 text-[13px] md:text-[15px]"><CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-[#0054A6] shrink-0 mt-0.5" /> {item}</li>
                             ))}
                         </ul>
                     </motion.div>
                 </div>
 
                 {/* 4. SECTION: PRODUCTS */}
-                <div className="mb-32">
-                    <div className="flex items-center gap-4 mb-12"><Truck size={32} className="text-[#0054A6]" /><h2 className="text-3xl font-semibold text-[#1a2e44]">{t.products.title}</h2></div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="mb-16 md:mb-32">
+                    <div className="flex items-center gap-3 md:gap-4 mb-8 md:mb-12">
+                        <Truck className="text-[#0054A6] w-6 h-6 md:w-8 md:h-8" />
+                        <h2 className="text-2xl md:text-3xl font-semibold text-[#1a2e44]">{t.products.title}</h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         {t.products.list.map((item, i) => (
-                            <motion.div whileHover={{ y: -10 }} key={i} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all">
-                                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-[#0054A6]">
-                                    {i === 0 ? <Truck size={24} /> : i === 1 ? <Cpu size={24} /> : i === 2 ? <Wrench size={24} /> : <Factory size={24} />}
+                            <motion.div whileHover={{ y: -5 }} key={i} className="bg-white p-6 md:p-8 rounded-[20px] md:rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all">
+                                <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 text-[#0054A6]">
+                                    {i === 0 ? <Truck className="w-5 h-5 md:w-6 md:h-6" /> : i === 1 ? <Cpu className="w-5 h-5 md:w-6 md:h-6" /> : i === 2 ? <Wrench className="w-5 h-5 md:w-6 md:h-6" /> : <Factory className="w-5 h-5 md:w-6 md:h-6" />}
                                 </div>
-                                <p className="text-[15px] font-semibold text-[#1a2e44] leading-relaxed">{item}</p>
+                                <p className="text-[14px] md:text-[15px] font-semibold text-[#1a2e44] leading-relaxed">{item}</p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
 
-                {/* 5. SECTION: PERSONNEL & FACTORS - YANGILANGAN LAYOUT */}
-                <div className="mb-32">
-                    {/* TOP ROW: TEXT NEXT TO IMAGE */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
+                {/* 5. SECTION: PERSONNEL & FACTORS */}
+                <div className="mb-16 md:mb-32">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center mb-10 md:mb-16">
                         <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                            <h3 className="text-3xl font-semibold text-[#1a2e44] mb-6">{t.personnel.title}</h3>
-                            <p className="text-xl text-[#0054A6] font-bold mb-6 italic leading-snug">
+                            <h3 className="text-2xl md:text-3xl font-semibold text-[#1a2e44] mb-4 md:mb-6">{t.personnel.title}</h3>
+                            <p className="text-lg md:text-xl text-[#0054A6] font-bold mb-4 md:mb-6 italic leading-snug">
                                 {t.personnel.text}
                             </p>
-                            <p className="text-gray-500 font-medium leading-relaxed">
+                            <p className="text-sm md:text-base text-gray-500 font-medium leading-relaxed">
                                 {t.personnel.qualityText}
                             </p>
                         </motion.div>
@@ -340,8 +348,8 @@ const GeneralInfo = ({ lang = 'ru' }) => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            className="rounded-[32px] overflow-hidden shadow-2xl h-[450px] cursor-pointer relative group border-8 border-gray-50"
-                            onClick={() => setIsLightboxOpen(true)}
+                            className="rounded-[20px] md:rounded-[32px] overflow-hidden shadow-2xl h-[300px] md:h-[450px] cursor-pointer relative group border-4 md:border-8 border-gray-50"
+                            onClick={() => { setSelectedImg(serviceImages[currentServiceIdx]); setIsLightboxOpen(true); }}
                         >
                             <AnimatePresence mode='wait'>
                                 <motion.img
@@ -354,20 +362,19 @@ const GeneralInfo = ({ lang = 'ru' }) => {
                                 />
                             </AnimatePresence>
 
-                            <div className="absolute inset-x-0 bottom-8 flex justify-center items-center gap-4 z-10 px-10">
-                                <button onClick={(e) => handleNav('prev', e)} className="w-10 h-10 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-[#0054A6] transition-all cursor-pointer"><ChevronLeft size={20} /></button>
-                                <div className="flex gap-2 flex-1 justify-center">
+                            <div className="absolute inset-x-0 bottom-4 md:bottom-8 flex justify-center items-center gap-3 md:gap-4 z-10 px-4 md:px-10">
+                                <button onClick={(e) => handleNav('prev', e)} className="w-8 h-8 md:w-10 md:h-10 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-[#0054A6] transition-all cursor-pointer"><ChevronLeft size={16} md:size={20} /></button>
+                                <div className="flex gap-1.5 md:gap-2 flex-1 justify-center">
                                     {serviceImages.map((_, i) => (
-                                        <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === currentServiceIdx ? 'w-10 bg-[#0054A6]' : 'w-2 bg-white/40'}`} />
+                                        <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === currentServiceIdx ? 'w-6 md:w-10 bg-[#0054A6]' : 'w-1.5 md:w-2 bg-white/40'}`} />
                                     ))}
                                 </div>
-                                <button onClick={(e) => handleNav('next', e)} className="w-10 h-10 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-[#0054A6] transition-all cursor-pointer"><ChevronRight size={20} /></button>
+                                <button onClick={(e) => handleNav('next', e)} className="w-8 h-8 md:w-10 md:h-10 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-[#0054A6] transition-all cursor-pointer"><ChevronRight size={16} md:size={20} /></button>
                             </div>
                         </motion.div>
                     </div>
 
-                    {/* BOTTOM ROW: 4 FACTORS CARDS */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         {t.factors.map((factor, i) => (
                             <motion.div 
                                 key={i} 
@@ -375,18 +382,18 @@ const GeneralInfo = ({ lang = 'ru' }) => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className={`p-8 rounded-[32px] border ${i === 3 ? 'bg-[#f0f4f8]' : 'bg-white border-gray-100'} shadow-sm hover:shadow-md transition-all h-full`}
+                                className={`p-5 md:p-8 rounded-[20px] md:rounded-[32px] border ${i === 3 ? 'bg-[#f0f4f8]' : 'bg-white border-gray-100'} shadow-sm hover:shadow-md transition-all h-full`}
                             >
-                                <h4 className="text-[15px] font-bold text-[#1a2e44] mb-6 leading-tight border-b border-gray-100 pb-4">{factor.title}</h4>
+                                <h4 className="text-[14px] md:text-[15px] font-bold text-[#1a2e44] mb-4 md:mb-6 leading-tight border-b border-gray-100 pb-3 md:pb-4">{factor.title}</h4>
                                 {factor.items ? (
-                                    <ul className="space-y-3">
+                                    <ul className="space-y-2 md:space-y-3">
                                         {factor.items.map((li, idx) => (
-                                            <li key={idx} className="text-[12px] text-gray-500 font-semibold flex gap-2 leading-relaxed">
+                                            <li key={idx} className="text-[11px] md:text-[12px] text-gray-500 font-semibold flex gap-2 leading-relaxed">
                                                 <div className="w-1 h-1 bg-[#0054A6] rounded-full mt-1.5 shrink-0" /> {li}
                                             </li>
                                         ))}
                                     </ul>
-                                ) : <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">{factor.desc}</p>}
+                                ) : <p className="text-[11px] md:text-[12px] text-gray-500 font-semibold leading-relaxed">{factor.desc}</p>}
                             </motion.div>
                         ))}
                     </div>
@@ -396,18 +403,27 @@ const GeneralInfo = ({ lang = 'ru' }) => {
             {/* LIGHTBOX MODAL */}
             <AnimatePresence>
                 {isLightboxOpen && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[250] bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-                        <button onClick={closeLightbox} className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors p-2 cursor-pointer z-[260]"><X size={40} /></button>
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        exit={{ opacity: 0 }} 
+                        className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+                    >
+                        <button onClick={closeLightbox} className="absolute top-4 md:top-8 right-4 md:right-8 text-white/50 hover:text-white transition-colors p-2 cursor-pointer z-[10000]"><X size={32} md:size={40} /></button>
                         
-                        <button onClick={(e) => handleNav('prev', e)} className="absolute left-4 lg:left-8 p-4 text-white/30 hover:text-white transition-colors cursor-pointer hidden md:block z-[260]"><ChevronLeft size={60} strokeWidth={1} /></button>
-                        <button onClick={(e) => handleNav('next', e)} className="absolute right-4 lg:right-8 p-4 text-white/30 hover:text-white transition-colors cursor-pointer hidden md:block z-[260]"><ChevronRight size={60} strokeWidth={1} /></button>
+                        {isGalleryImg && (
+                            <>
+                                <button onClick={(e) => handleNav('prev', e)} className="absolute left-4 lg:left-8 p-4 text-white/30 hover:text-white transition-colors cursor-pointer hidden md:block z-[10000]"><ChevronLeft size={60} strokeWidth={1} /></button>
+                                <button onClick={(e) => handleNav('next', e)} className="absolute right-4 lg:right-8 p-4 text-white/30 hover:text-white transition-colors cursor-pointer hidden md:block z-[10000]"><ChevronRight size={60} strokeWidth={1} /></button>
+                            </>
+                        )}
 
                         <motion.img
-                            key={currentServiceIdx}
+                            key={selectedImg}
                             initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            src={serviceImages[currentServiceIdx]}
-                            className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
+                            src={selectedImg}
+                            className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl mt-8 md:mt-0"
                             alt="Full View"
                         />
                     </motion.div>
