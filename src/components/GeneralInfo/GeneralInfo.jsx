@@ -6,11 +6,11 @@ import {
 } from 'lucide-react';
 import uzautobg from '../../../public/uzbg1.png'
 import uzautobg1 from '../../../public/bglast.png'
-import serive1 from '../../../public/serive1.jpg'
-import serive2 from '../../../public/serive2.jpg'
-import serive3 from '../../../public/serive3.jpg'
-import serive4 from '../../../public/serive4.jpg'
-import serive5 from '../../../public/serive5.jpg'
+import serive1 from '../../../public/serive1.JPG'
+import serive2 from '../../../public/serive2.JPG'
+import serive3 from '../../../public/serive3.JPG'
+import serive4 from '../../../public/serive4.JPG'
+import serive5 from '../../../public/serive5.JPG'
 
 const translations = {
     ru: {
