@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../../assets/logo.jpg';
+import logo from '../../assets/Logo.jpg';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight, ChevronRight, Globe as GlobeIcon, Search, Menu as MenuIcon, X as XIcon } from 'lucide-react';
 
