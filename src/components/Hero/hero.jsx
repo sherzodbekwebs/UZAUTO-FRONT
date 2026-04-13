@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const translations = {
     uz: { catalogBtn: "KATALOG", contactBtn: "ALOQA", title: "Kelajak yo'llari uchun qudratli yechimlar", description: "UzAuto Trailer — og'ir yuk tashish sanoatida ishonchli hamkoringiz. Biz kuch va innovatsiyani birlashtiramiz." },
-    ru: { catalogBtn: "КАТАЛОГ", contactBtn: "СВЯЗЬ", title: "МОЩНЫЕ РЕШЕНИЯ ДЛЯ ДОРОГ БУДУЩЕГО", description: "UzAuto Trailer — ваш надежный партнер в индустрии большегрузных перевозок. Мы объединяем силу и инновации." },
+    ru: { catalogBtn: "КАТАЛОГ", contactBtn: "КОНТАКТЫ", title: "МОЩНЫЕ РЕШЕНИЯ ДЛЯ ДОРОГ БУДУЩЕГО", description: "UzAuto Trailer — ваш надежный партнер в индустрии большегрузных перевозок. Мы объединяем силу и инновации." },
     en: { catalogBtn: "CATALOG", contactBtn: "CONTACT", title: "POWERFUL SOLUTIONS FOR THE ROADS OF THE FUTURE", description: "UzAuto Trailer is your reliable partner in the heavy haulage industry. We combine strength and innovation." }
 };
 

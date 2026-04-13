@@ -12,7 +12,7 @@ const DynamicPage = ({ lang, slug: propSlug }) => { // <-- propSlug ni qabul qil
 
     useEffect(() => {
         setLoading(true);
-        // Endi faqat endpointni yozasiz, localhost shart emas
+       
         API.get(`/pages/slug/${slug}`)
             .then(res => {
                 setContent(res.data);
