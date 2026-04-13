@@ -4,7 +4,6 @@ import {
     Send, Instagram, Facebook, Youtube,
     MapPin, Phone, Mail, ArrowRight
 } from 'lucide-react';
-import logo from '../../assets/logo.jpg';
 import logo_footer from '../../assets/logo_footer.png';
 import { Link } from 'react-router-dom';
 
