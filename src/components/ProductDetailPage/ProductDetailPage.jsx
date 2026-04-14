@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, PhoneCall, ShieldCheck, Info, Signal, Truck, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async'; // SEO uchun qo'shildi
 import API, { API_URL } from '../../api/axios';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -113,6 +114,28 @@ const ProductDetailPage = () => {
     }, {});
     const specSections = groupedSpecs ? Object.values(groupedSpecs) : [];
 
+    // ── SEO & Structured Data (JSON-LD) ──
+    const seoTitle = `${getField(product, 'title')} ${product.brand?.name || ''} | UzAuto Trailer`;
+    const seoDesc = `${getField(product, 'content')?.substring(0, 160)}... Купить в Узбекистане.`;
+    const jsonLd = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": getField(product, 'title'),
+        "image": `${API_URL}${product.image}`,
+        "description": getField(product, 'content'),
+        "brand": {
+            "@type": "Brand",
+            "name": product.brand?.name || "UzAuto Trailer"
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "UZS",
+            "price": product.price || "0",
+            "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+        }
+    };
+
     return (
         <div
             className="min-h-screen text-[#1A1C1E] overflow-x-hidden"
@@ -122,6 +145,18 @@ const ProductDetailPage = () => {
                 fontFamily: "'Barlow Condensed', sans-serif",
             }}
         >
+            {/* 🛡️ SEO HELMET SECTION */}
+            <Helmet>
+                <title>{seoTitle}</title>
+                <meta name="description" content={seoDesc} />
+                <meta name="keywords" content={`UzAuto Trailer, ${product.brand?.name}, ${getField(product, 'title')}, грузовики, тягачи, самосвалы, купить в ташкенте`} />
+                <meta property="og:title" content={seoTitle} />
+                <meta property="og:description" content={seoDesc} />
+                <meta property="og:image" content={`${API_URL}${product.image}`} />
+                <meta property="og:type" content="product" />
+                <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+            </Helmet>
+
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
                 * { box-sizing: border-box; }
