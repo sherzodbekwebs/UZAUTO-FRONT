@@ -115,7 +115,7 @@ const ProductDetailPage = () => {
 
     return (
         <div
-            className="min-h-screen text-[#1A1C1E]"
+            className="min-h-screen text-[#1A1C1E] overflow-x-hidden"
             style={{
                 backgroundColor: '#ffffff',
                 backgroundImage: `radial-gradient(ellipse 100% 60% at 50% -10%, rgba(0,97,164,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 90% 80%, rgba(0,97,164,0.05) 0%, transparent 60%)`,
@@ -138,13 +138,13 @@ const ProductDetailPage = () => {
             <div className="pointer-events-none fixed inset-x-0 z-10 h-px bg-gradient-to-r from-transparent via-blue-500/10 to-transparent" />
 
             {/* ── STICKY SUBNAV ── */}
-            <nav className="fixed top-16 left-0 w-full z-40 h-14 flex items-center justify-between px-6 lg:px-16 border-b border-gray-100 backdrop-blur-md bg-white/90">
+            <nav className="fixed top-16 left-0 w-full z-40 h-14 flex items-center justify-between px-4 sm:px-6 lg:px-16 border-b border-gray-100 backdrop-blur-md bg-white/90">
                 <button
                     onClick={() => navigate('/products')}
                     className="flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-[#0061A4] uppercase tracking-widest transition-all group"
                 >
                     <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="mono">//</span> {lang === 'ru' ? 'КАТАЛОГ' : 'KATALOG'}
+                    <span className="mono font-normal">//</span> {lang === 'ru' ? 'КАТАЛОГ' : 'KATALOG'}
                 </button>
 
                 <div className="hidden sm:flex items-center gap-2">
@@ -164,23 +164,23 @@ const ProductDetailPage = () => {
             </nav>
 
             {/* ── HERO STRIP ── */}
-            <section className="relative overflow-hidden border-b border-gray-100 pt-28 pb-10 px-6 lg:px-16"
+            <section className="relative overflow-hidden border-b border-gray-100 pt-32 lg:pt-40 pb-10 px-6 lg:px-16"
                 style={{ backgroundColor: '#fcfdfe' }}>
                 <div className="absolute inset-0 grid-bg opacity-100" />
                 <div className="relative z-10 max-w-[1600px] mx-auto">
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-3 mb-4">
                         <div className="w-8 h-px bg-[#0061A4]" />
-                        <span className="mono text-[#0061A4] text-[10px] font-bold uppercase tracking-[0.25em]">
+                        <span className="mono text-[#0061A4] text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em]">
                             {product.brand?.name} — {getField(product.category, 'title')}
                         </span>
                     </div>
-                    <h1 className="text-[52px] lg:text-[72px] font-bold uppercase leading-none tracking-tight">
+                    <h1 className="text-[32px] sm:text-[42px] lg:text-[72px] font-bold uppercase leading-[1.1] lg:leading-none tracking-tight">
                         <GlitchText>
                             <span className="text-[#1A1C1E]">{getField(product, 'title')}</span>
                         </GlitchText>
                     </h1>
 
-                    <div className="flex items-center gap-8 mt-6 pt-5 border-t border-gray-100">
+                    <div className="flex items-center gap-8 mt-8 pt-6 border-t border-gray-100">
                         <div className={cn(
                             "flex items-center gap-2 px-4 py-1.5 text-[9px] font-black uppercase tracking-widest border",
                             product.inStock
@@ -201,11 +201,11 @@ const ProductDetailPage = () => {
             </section>
 
             {/* ── MAIN CONTENT ── */}
-            <div className="max-w-[1600px] mx-auto px-6 lg:px-16 py-14">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            <div className="max-w-[1600px] mx-auto px-6 lg:px-16 py-10 lg:py-14">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
 
-                    {/* ── IMAGE COLUMN (7 cols) ── */}
-                    <div className="lg:col-span-7 space-y-5">
+                    {/* ── IMAGE COLUMN ── */}
+                    <div className="lg:col-span-7 space-y-6 sm:space-y-8">
 
                         {/* Main image card */}
                         <div className="relative overflow-hidden bg-gray-50 border border-gray-100 shadow-sm group">
@@ -214,7 +214,7 @@ const ProductDetailPage = () => {
                             <HudCorner position="bl" size={14} />
                             <HudCorner position="br" size={14} />
 
-                            <div className="relative aspect-[4/3] flex items-center justify-center p-8 lg:p-14">
+                            <div className="relative aspect-video sm:aspect-[4/3] flex items-center justify-center p-6 sm:p-14">
                                 <AnimatePresence mode="wait">
                                     <motion.img
                                         key={activeImg}
@@ -229,9 +229,8 @@ const ProductDetailPage = () => {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Image count badge */}
-                            <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100">
-                                <span className="mono text-[9px] text-gray-400 uppercase tracking-widest">
+                            <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 shadow-sm">
+                                <span className="mono text-[9px] text-gray-400 uppercase tracking-widest font-bold">
                                     {String(allImages.indexOf(activeImg) + 1).padStart(2, '0')} / {String(allImages.length).padStart(2, '0')}
                                 </span>
                             </div>
@@ -239,18 +238,16 @@ const ProductDetailPage = () => {
 
                         {/* Thumbnails */}
                         {allImages.length > 1 && (
-                            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+                            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
                                 {allImages.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setActiveImg(img)}
-                                        onMouseEnter={() => setHoveredThumb(idx)}
-                                        onMouseLeave={() => setHoveredThumb(null)}
                                         className={cn(
-                                            "thumb-btn relative w-20 h-16 shrink-0 overflow-hidden border-2 transition-all",
+                                            "thumb-btn relative w-20 sm:w-24 h-16 sm:h-20 shrink-0 overflow-hidden border-2 transition-all",
                                             activeImg === img
                                                 ? "border-[#0061A4]"
-                                                : "border-gray-100 opacity-50 hover:opacity-80"
+                                                : "border-gray-100 opacity-60 hover:opacity-100"
                                         )}
                                     >
                                         {activeImg === img && (
@@ -270,16 +267,16 @@ const ProductDetailPage = () => {
                         )}
 
                         {/* Description block */}
-                        <div className="relative overflow-hidden border border-gray-100 p-8 lg:p-10 bg-white">
+                        <div className="relative overflow-hidden border border-gray-100 p-6 sm:p-10 bg-white">
                             <HudCorner position="tl" size={10} />
                             <HudCorner position="br" size={10} />
-                            <div className="flex items-center gap-3 mb-5">
+                            <div className="flex items-center gap-3 mb-6">
                                 <div className="w-4 h-px bg-[#0061A4]" />
                                 <span className="mono text-gray-400 text-[10px] tracking-[0.3em] uppercase">
                                     // {lang === 'uz' ? 'Mahsulot haqida' : lang === 'ru' ? 'Описание' : 'Description'}
                                 </span>
                             </div>
-                            <p className="text-gray-500 text-lg leading-relaxed font-medium whitespace-pre-wrap">
+                            <p className="text-gray-500 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap">
                                 {getField(product, 'content')}
                             </p>
                         </div>
@@ -298,27 +295,26 @@ const ProductDetailPage = () => {
                         )}
                     </div>
 
-                    {/* ── INFO COLUMN (5 cols) ── */}
-                    <div className="lg:col-span-5 sticky top-32 space-y-6">
+                    {/* ── INFO COLUMN ── */}
+                    <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-8">
 
                         {/* Quick specs grid */}
                         {product.techSpecs?.length > 0 && (
                             <div>
-                                <div className="flex items-center gap-3 mb-4">
+                                <div className="flex items-center gap-3 mb-5">
                                     <div className="w-4 h-px bg-[#0061A4]" />
                                     <span className="mono text-gray-400 text-[10px] tracking-[0.3em] uppercase">// SPEC_OVERVIEW</span>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                     {product.techSpecs.slice(0, 4).map((spec, i) => (
                                         <div
                                             key={i}
-                                            className="relative p-4 bg-gray-50 border border-gray-100 group hover:border-blue-500/30 hover:bg-blue-50/30 transition-all duration-300"
+                                            className="relative p-4 sm:p-5 bg-gray-50/50 border border-gray-100 group hover:border-blue-500/30 hover:bg-blue-50/30 transition-all duration-300"
                                         >
-                                            <HudCorner position="tl" size={7} color="transparent" />
-                                            <p className="text-gray-600 text-[9px] tracking-widest uppercase mb-1.5 leading-tight">
+                                            <p className="text-gray-600 text-[8px] sm:text-[9px] tracking-widest uppercase mb-2 leading-tight font-bold opacity-70">
                                                 {getField(spec, 'key')}
                                             </p>
-                                            <p className="text-[#1A1C1E] font-bold text-[15px] uppercase tracking-tight leading-tight">
+                                            <p className="text-[#1A1C1E] font-bold text-[13px] sm:text-[15px] uppercase tracking-tight leading-tight">
                                                 {getField(spec, 'val')}
                                             </p>
                                         </div>
@@ -328,19 +324,19 @@ const ProductDetailPage = () => {
                         )}
 
                         {/* Price & CTA */}
-                        <div className="relative overflow-hidden border border-gray-100 bg-white p-8"
+                        <div className="relative overflow-hidden border border-gray-100 bg-white p-6 sm:p-10 shadow-lg shadow-blue-50"
                             style={{ background: 'linear-gradient(135deg, rgba(0,97,164,0.04) 0%, rgba(255,255,255,1) 60%)' }}>
                             <HudCorner position="tl" size={12} />
                             <HudCorner position="tr" size={12} />
                             <HudCorner position="bl" size={12} />
                             <HudCorner position="br" size={12} />
 
-                            <div className="relative z-10 space-y-6">
+                            <div className="relative z-10 space-y-8">
                                 <div>
-                                    <p className="mono text-gray-400 text-[9px] tracking-widest uppercase font-bold mb-1">
+                                    <p className="mono text-gray-400 text-[10px] tracking-widest uppercase font-bold mb-2">
                                         {t('price')}
                                     </p>
-                                    <p className="text-3xl font-bold text-slate-900 tracking-tighter italic">
+                                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tighter italic tabular-nums">
                                         {product.price
                                             ? `${product.price} ${lang === 'ru' ? 'сум' : "so'm"}`
                                             : t('call_price')}
@@ -349,12 +345,12 @@ const ProductDetailPage = () => {
 
                                 <button
                                     onClick={() => navigate('/contacts')}
-                                    className="relative w-full flex items-center justify-center gap-3 py-5 bg-[#0061A4] text-white font-bold text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-[0.99]"
+                                    className="relative w-full flex items-center justify-center gap-3 py-5 sm:py-6 bg-[#0061A4] text-white font-bold text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-[0.98] rounded-sm"
                                 >
                                     <HudCorner position="tl" size={7} color="rgba(255,255,255,0.3)" />
                                     <HudCorner position="br" size={7} color="rgba(255,255,255,0.3)" />
-                                    <PhoneCall size={14} /> {t('contact_us')}
-                                    <ArrowUpRight size={14} />
+                                    <PhoneCall size={16} /> {t('contact_us')}
+                                    <ArrowUpRight size={16} />
                                 </button>
                             </div>
                         </div>
@@ -362,27 +358,27 @@ const ProductDetailPage = () => {
                         {/* Advantages */}
                         {product.advantages?.length > 0 && (
                             <div>
-                                <div className="flex items-center gap-3 mb-4">
+                                <div className="flex items-center gap-3 mb-5">
                                     <div className="w-4 h-px bg-[#0061A4]" />
                                     <span className="mono text-gray-400 text-[10px] tracking-[0.3em] uppercase">// ADVANTAGES</span>
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {product.advantages.map((adv) => (
                                         <div
                                             key={adv.id}
-                                            className="relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-100 hover:border-blue-500/30 hover:bg-blue-50/20 transition-all duration-300 group"
+                                            className="relative flex items-center gap-3 px-4 py-4 bg-white border border-gray-100 hover:border-blue-500/30 hover:bg-blue-50/20 transition-all duration-300 group"
                                         >
                                             <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#0061A4] opacity-0 group-hover:opacity-100 transition-opacity" />
                                             {adv.icon ? (
                                                 <img
                                                     src={`${API_URL}${adv.icon}`}
-                                                    className="w-6 h-6 object-contain shrink-0 grayscale grayscale-0 transition-all"
+                                                    className="w-6 h-6 object-contain shrink-0 transition-all"
                                                     alt=""
                                                 />
                                             ) : (
-                                                <ShieldCheck size={16} className="text-gray-300 group-hover:text-[#0061A4] transition-colors shrink-0" />
+                                                <ShieldCheck size={18} className="text-gray-300 group-hover:text-[#0061A4] transition-colors shrink-0" />
                                             )}
-                                            <span className=" text-[10px] font-bold text-gray-700 group-hover:text-[#1A1C1E] uppercase leading-tight tracking-wide transition-colors line-clamp-2">
+                                            <span className="text-[10px] sm:text-[11px] font-bold text-gray-700 group-hover:text-[#1A1C1E] uppercase leading-tight tracking-wide transition-colors">
                                                 {getField(adv, 'title')}
                                             </span>
                                         </div>
@@ -392,23 +388,23 @@ const ProductDetailPage = () => {
                         )}
 
                         {/* Contact sidebar card */}
-                        <div className="relative overflow-hidden p-6"
+                        <div className="relative overflow-hidden p-8"
                             style={{ background: 'linear-gradient(135deg, rgba(0,97,164,0.1) 0%, rgba(255,255,255,1) 100%)', border: '1px solid #E5E7EB' }}>
                             <HudCorner position="tl" size={10} />
                             <HudCorner position="br" size={10} />
                             <div className="relative z-10">
-                                <div className="w-9 h-9 flex items-center justify-center border border-blue-100 mb-4 text-[#0061A4]">
-                                    <Truck size={18} />
+                                <div className="w-10 h-10 flex items-center justify-center border border-blue-100 mb-5 text-[#0061A4]">
+                                    <Truck size={22} />
                                 </div>
-                                <h4 className="text-base font-black uppercase leading-tight text-[#1A1C1E] mb-2">
+                                <h4 className="text-lg font-black uppercase leading-tight text-[#1A1C1E] mb-3">
                                     {t('custom_solution_title')}
                                 </h4>
-                                <p className="text-gray-400 text-xs leading-relaxed mb-4 font-medium">
+                                <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
                                     {t('custom_solution_desc')}
                                 </p>
                                 <button
                                     onClick={() => navigate('/contacts')}
-                                    className="w-full py-3 bg-[#0061A4] text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                                    className="w-full py-4 bg-[#0061A4] text-white text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
                                 >
                                     {t('contact_us')}
                                 </button>
@@ -419,8 +415,8 @@ const ProductDetailPage = () => {
 
                 {/* ── TECH SPECS SECTIONS ── */}
                 {specSections.length > 0 && (
-                    <div className="mt-24 pt-16 border-t border-gray-100">
-                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+                    <div className="mt-20 lg:mt-32 pt-16 border-t border-gray-100">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
                             <div>
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-8 h-px bg-[#0061A4]" />
@@ -429,7 +425,7 @@ const ProductDetailPage = () => {
                                     </span>
                                     <Signal size={12} className="text-blue-500 animate-pulse" />
                                 </div>
-                                <h2 className="text-[42px] lg:text-[56px] font-bold uppercase leading-none tracking-tight">
+                                <h2 className="text-[36px] sm:text-[42px] lg:text-[56px] font-bold uppercase leading-[1.1] tracking-tight">
                                     <span className="text-[#1A1C1E]">
                                         {lang === 'uz' ? 'Texnik' : lang === 'ru' ? 'Технические' : 'Technical'}
                                     </span>
@@ -439,13 +435,15 @@ const ProductDetailPage = () => {
                                     </span>
                                 </h2>
                             </div>
-                            <span className="mono text-[#0061A4] text-2xl font-bold">
-                                {String(specSections.length).padStart(2, '0')}
-                                <span className="text-gray-300 text-base"> / {lang === 'uz' ? 'bo\'lim' : 'секций'}</span>
-                            </span>
+                            <div className="flex items-center gap-3">
+                                <span className="mono text-[#0061A4] text-3xl font-bold">
+                                    {String(specSections.length).padStart(2, '0')}
+                                </span>
+                                <span className="text-gray-300 text-sm uppercase tracking-widest font-bold"> / {lang === 'uz' ? 'bo\'lim' : 'секций'}</span>
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                             {specSections.map((section, idx) => (
                                 <motion.div
                                     key={idx}
@@ -458,28 +456,26 @@ const ProductDetailPage = () => {
                                     <HudCorner position="tl" size={10} />
                                     <HudCorner position="br" size={10} />
 
-                                    {/* Section header */}
-                                    <div className="px-8 py-5 border-b border-gray-50 flex items-center gap-3">
+                                    <div className="px-6 sm:px-8 py-5 border-b border-gray-50 flex items-center gap-4 bg-gray-50/30">
                                         <div className="w-1.5 h-1.5 bg-[#0061A4] rounded-full" />
-                                        <h3 className=" text-[#0061A4] text-[14px] font-bold uppercase tracking-widest">
+                                        <h3 className="text-[#0061A4] text-[13px] sm:text-[14px] font-bold uppercase tracking-widest">
                                             {section.title}
                                         </h3>
                                     </div>
 
-                                    {/* Spec rows */}
-                                    <div className="px-8 py-4 space-y-0">
+                                    <div className="px-6 sm:px-8 py-4">
                                         {section.specs.map((spec, si) => (
                                             <div
                                                 key={spec.id}
                                                 className={cn(
-                                                    "spec-row flex justify-between items-end py-3.5 transition-all duration-200",
+                                                    "spec-row flex justify-between items-end gap-4 py-3.5 transition-all duration-200",
                                                     si < section.specs.length - 1 ? "border-b border-gray-50" : ""
                                                 )}
                                             >
-                                                <span className="spec-key  text-gray-800 text-[11px] uppercase transition-colors duration-200">
+                                                <span className="spec-key text-gray-800 text-[10px] sm:text-[11px] uppercase transition-colors duration-200 opacity-70">
                                                     {getField(spec, 'key')}
                                                 </span>
-                                                <span className="spec-val text-[#1A1C1E] font-bold text-[12px] uppercase  text-right transition-colors duration-200">
+                                                <span className="spec-val text-[#1A1C1E] font-bold text-[11px] sm:text-[12px] uppercase text-right transition-colors duration-200">
                                                     {getField(spec, 'val')}
                                                 </span>
                                             </div>
@@ -493,40 +489,40 @@ const ProductDetailPage = () => {
             </div>
 
             {/* ── FOOTER CTA ── */}
-            <section className="mt-24 relative overflow-hidden"
+            <section className="mt-20 lg:mt-32 relative overflow-hidden"
                 style={{ backgroundColor: '#0061A4' }}>
                 <div className="absolute inset-0 grid-bg opacity-[0.07]" />
                 <div className="absolute inset-0"
                     style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px)', backgroundSize: '100% 4px' }} />
 
-                <div className="relative z-10 max-w-[1600px] mx-auto px-6 lg:px-16 py-20">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                <div className="relative z-10 max-w-[1600px] mx-auto px-6 lg:px-16 py-20 lg:py-24">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
                         <div>
-                            <div className="flex items-center gap-3 mb-4">
+                            <div className="flex items-center gap-3 mb-6">
                                 <div className="w-8 h-px bg-white/40" />
                                 <span className="mono text-white/40 text-[10px] font-bold uppercase tracking-[0.25em]">
                                     // GET_IN_TOUCH
                                 </span>
                             </div>
-                            <h2 className="text-[42px] lg:text-[60px] font-bold uppercase leading-none tracking-tight text-white">
+                            <h2 className="text-[32px] sm:text-[42px] lg:text-[60px] font-bold uppercase leading-none tracking-tight text-white mb-6">
                                 {lang === 'ru' ? 'ЗАИНТЕРЕСОВАНЫ?' : "QIZIQTIRDIMi?"}
                             </h2>
-                            <p className="text-blue-100/60 text-base font-medium mt-3 max-w-md">
+                            <p className="text-blue-100/60 text-base sm:text-lg font-medium max-w-md">
                                 {lang === 'ru'
-                                    ? 'Наши менеджеры ответят на все ваши вопросы.'
-                                    : "Menejerlarimiz sizga barcha savollaringiz bo'yicha yordam berishadi."}
+                                    ? 'Наши менеджеры ответят на все ваши вопросы в кратчайшие сроки.'
+                                    : "Menejerlarimiz barcha savollaringiz bo'yicha yordam berishga tayyor."}
                             </p>
                         </div>
 
                         <button
                             onClick={() => navigate('/contacts')}
-                            className="relative flex items-center gap-3 px-12 py-6 bg-white text-[#0061A4] font-bold text-[11px] uppercase tracking-widest hover:bg-blue-50 transition-all shadow-2xl active:scale-[0.98]"
+                            className="relative flex items-center justify-center gap-4 px-10 sm:px-12 py-5 sm:py-7 bg-white text-[#0061A4] font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.2em] hover:bg-blue-50 transition-all shadow-2xl active:scale-[0.98] w-full lg:w-auto rounded-sm"
                         >
                             <HudCorner position="tl" size={8} color="#0061A4" />
                             <HudCorner position="br" size={8} color="#0061A4" />
-                            <PhoneCall size={15} />
+                            <PhoneCall size={18} />
                             {lang === 'ru' ? 'ЗАКАЗАТЬ ЗВОНОК' : "BOG'LANISH"}
-                            <ArrowUpRight size={14} />
+                            <ArrowUpRight size={18} />
                         </button>
                     </div>
                 </div>
