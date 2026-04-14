@@ -92,7 +92,6 @@ const translations = {
     }
 };
 
-// 🛠️ Transliteratsiya yordamchisi (Lotin -> Kirill)
 const toCyrillic = (text) => {
     const map = {
         'sh': 'ш', 'ch': 'ч', 'yo': 'ё', 'yu': 'ю', 'ya': 'я', 'ye': 'е', 'o\'': 'ў', 'g\'': 'ғ',
@@ -132,29 +131,22 @@ const Navbar = () => {
         API.get('/products').then(res => setAllProducts(res.data));
     }, []);
 
-    // 🛡️ Aqlli til tanlash (Fallback logic)
     const getLangField = (obj, field) => {
         if (!obj) return "";
         const currentSuffix = lang.charAt(0).toUpperCase() + lang.slice(1);
         return obj[`${field}${currentSuffix}`] || obj[`${field}Ru`] || obj[`${field}Uz`] || obj[`${field}En`] || "";
     };
 
-    // 🚀 Professional Qidiruv Mantiqi
     useEffect(() => {
         const query = searchTerm.trim().toLowerCase();
         if (query.length > 1) {
-            const cyrillicQuery = toCyrillic(query); // tyagach -> тягач
-
+            const cyrillicQuery = toCyrillic(query);
             const filtered = allProducts.filter(p => {
                 const ru = (p.titleRu || "").toLowerCase();
                 const uz = (p.titleUz || "").toLowerCase();
                 const en = (p.titleEn || "").toLowerCase();
-
-                // Har qanday tilda yoki Kirill talqinida mos kelsa topadi
-                return ru.includes(query) || ru.includes(cyrillicQuery) || 
-                       uz.includes(query) || en.includes(query);
+                return ru.includes(query) || ru.includes(cyrillicQuery) || uz.includes(query) || en.includes(query);
             });
-            
             setSuggestions(filtered.slice(0, 6));
             setShowSuggestions(true);
         } else {
@@ -195,7 +187,15 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="fixed top-0 left-0 w-full z-[1000] bg-white/90 backdrop-blur-lg border-b border-gray-100 h-16 lg:h-20 transition-all duration-300">
+            {/* 🛠️ Roboto Shriftini majburiy yuklash */}
+            <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+                .navbar-roboto-container * { 
+                    font-family: 'Roboto', sans-serif !important; 
+                }
+            `}</style>
+
+            <nav className="navbar-roboto-container fixed top-0 left-0 w-full z-[1000] bg-white/90 backdrop-blur-lg border-b border-gray-100 h-16 lg:h-20 transition-all duration-300">
                 <div className="max-w-[1440px] mx-auto h-full flex items-center justify-between px-4 lg:px-12">
                     <div className="flex items-center shrink-0">
                         <Link to="/"><img src={logo} alt="Logo" className="h-8 lg:h-11 w-auto rounded-lg object-contain cursor-pointer" /></Link>
@@ -302,7 +302,7 @@ const Navbar = () => {
 
             <AnimatePresence>
                 {isMobileMenuOpen && (
-                    <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} className="fixed inset-0 bg-white z-[9999] lg:hidden flex flex-col font-bold">
+                    <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} className="navbar-roboto-container fixed inset-0 bg-white z-[9999] lg:hidden flex flex-col font-bold">
                         <div className="h-16 flex items-center justify-between px-6 border-b">
                             <img src={logo} alt="Logo" className="h-8 w-auto" />
                             <button onClick={() => setIsMobileMenuOpen(false)}><XIcon size={24} /></button>

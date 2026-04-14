@@ -113,7 +113,7 @@ const Contacts = ({ lang = 'ru' }) => {
             <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
 
                 <div className="text-center mb-16 space-y-4">
-                    <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="text-5xl lg:text-6xl font-bold tracking-tight italic">
+                    <motion.h1 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="text-5xl lg:text-6xl font-bold tracking-tight ">
                         {t.title}
                     </motion.h1>
                     <p className="text-gray-500 text-lg font-normal max-w-2xl mx-auto">{t.subtitle}</p>
@@ -156,7 +156,7 @@ const Contacts = ({ lang = 'ru' }) => {
                                 </div>
                                 <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-4">
                                     <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Mail size={14} className="text-[#0061A4]" /> Email</div>
-                                    <a href="mailto:info@trailer.uz" className="text-2xl font-bold hover:text-[#0061A4] transition-colors block italic">info@trailer.uz</a>
+                                    <a href="mailto:info@trailer.uz" className="text-2xl font-bold hover:text-[#0061A4] transition-colors block ">info@trailer.uz</a>
                                 </div>
                             </div>
 
@@ -171,7 +171,7 @@ const Contacts = ({ lang = 'ru' }) => {
                                         </a>
                                     ))}
                                 </div>
-                                <p className="text-[9px] text-gray-300 font-bold uppercase tracking-widest text-center mt-6 italic">Follow us online</p>
+                                <p className="text-[9px] text-gray-300 font-bold uppercase tracking-widest text-center mt-6 ">Follow us online</p>
                             </div>
                         </div>
 
@@ -188,7 +188,7 @@ const Contacts = ({ lang = 'ru' }) => {
                     {/* RIGHT COLUMN: FORM */}
                     <div className="lg:col-span-5">
                         <div className="bg-white p-8 lg:p-10 rounded-[40px] border border-gray-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.04)] sticky top-32">
-                            <h3 className="text-2xl font-bold mb-8 italic">{t.form_title}</h3>
+                            <h3 className="text-2xl font-bold mb-8 ">{t.form_title}</h3>
                             <form className="space-y-6 text-[#1a2e44]">
                                 <div>
                                     <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">{t.name_label}</label>
@@ -217,7 +217,7 @@ const Contacts = ({ lang = 'ru' }) => {
                 {/* MAP SECTION */}
                 <div className="mt-20 space-y-8">
                     <div className="text-center space-y-2">
-                        <h2 className="text-xl font-bold uppercase tracking-[0.2em] text-gray-400 italic">{t.map_title}</h2>
+                        <h2 className="text-xl font-bold uppercase tracking-[0.2em] text-gray-400 ">{t.map_title}</h2>
                         <div className="w-12 h-1 bg-gray-200 mx-auto rounded-full"></div>
                     </div>
                     <div className="bg-white p-3 rounded-[40px] border border-gray-100 shadow-sm h-[500px] overflow-hidden relative">

@@ -17,7 +17,7 @@ import ScrollToTop from './components/ScrollToTop/ScrollToTop'
 import Home from './Home'
 import NewsListPage from './components/NewsListPage/NewsListPage'
 import NewsDetailPage from './components/NewsDetailPage/NewsDetailPage'
-import SearchResults from './components/SearchResults/SearchResults'
+// import SearchResults from './components/SearchResults/SearchResults'
 import Contacts from './components/Contacts/Contacts'
 import GeneralInfo from './components/GeneralInfo/GeneralInfo'
 import QualityManagement from './components/QualityManagement/QualityManagement'
@@ -60,7 +60,7 @@ const AppContent = () => {
           <Route path="/" element={<Home lang={lang} />} />
           <Route path="/news" element={<NewsListPage lang={lang} />} />
           <Route path="/news/:id" element={<NewsDetailPage lang={lang} />} />
-          <Route path="/search" element={<SearchResults lang={lang} />} />
+          {/* <Route path="/search" element={<SearchResults lang={lang} />} /> */}
           <Route path="/contacts" element={<Contacts lang={lang} />} />
           <Route path="/products" element={<ProductsPage lang={lang} />} />
           <Route path="/product/:id" element={<ProductDetailPage lang={lang} />} />

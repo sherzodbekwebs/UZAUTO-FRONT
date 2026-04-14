@@ -47,7 +47,7 @@ const Hero = ({ lang = 'ru' }) => {
     if (loading || bgImages.length === 0) return <div className="h-screen bg-[#0a0a0a]" />;
 
     return (
-        <section className="relative w-full flex flex-col lg:h-screen lg:block overflow-hidden bg-[#0a0a0a] font-inter">
+        <section className="relative w-full flex flex-col lg:h-screen lg:block overflow-hidden bg-[#0a0a0a] font-inter text-roboto">
 
             {/* 📸 IMAGE AREA */}
             <div className="relative w-full aspect-video sm:aspect-[16/8] lg:aspect-auto lg:h-full lg:absolute lg:inset-0 z-10 overflow-hidden">
@@ -72,7 +72,6 @@ const Hero = ({ lang = 'ru' }) => {
             </div>
 
             {/* 📝 TEXT CONTENT AREA */}
-            {/* 🚀 O'zgarishlar: -mt-28 dan -mt-12 ga tushirildi va pb-36 qo'shildi */}
             <div className="relative z-20 -mt-12 sm:-mt-16 lg:mt-0 lg:h-full max-w-[1600px] mx-auto px-6 lg:px-12 flex flex-col justify-start lg:justify-center items-center lg:items-start text-center lg:text-left bg-transparent pt-6 pb-36 lg:py-0">
                 <div className="max-w-3xl">
                     <motion.h1
@@ -105,8 +104,24 @@ const Hero = ({ lang = 'ru' }) => {
                 </div>
             </div>
 
-            {/* 🎮 CONTROLS AREA */}
-            <div className="absolute bottom-10 lg:bottom-12 left-0 right-0 z-40 px-6 lg:px-12 flex justify-between items-center pointer-events-none">
+            {/* 🎮 NAVIGATION ARROWS (Ekranning ikki yonida, o'rtada) */}
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 z-40 px-4 lg:px-8 flex justify-between items-center pointer-events-none w-full">
+                <button 
+                    onClick={prevSlide} 
+                    className="w-10 h-10 lg:w-12 lg:h-12 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#0061A4] hover:border-[#0061A4] backdrop-blur-md transition-all active:scale-90 pointer-events-auto"
+                >
+                    <ChevronLeft size={24} />
+                </button>
+                <button 
+                    onClick={nextSlide} 
+                    className="w-10 h-10 lg:w-12 lg:h-12 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#0061A4] hover:border-[#0061A4] backdrop-blur-md transition-all active:scale-90 pointer-events-auto"
+                >
+                    <ChevronRight size={24} />
+                </button>
+            </div>
+
+            {/* 📍 PAGINATION DOTS (Faqat nuqtalar pastda qoldi) */}
+            <div className="absolute bottom-10 lg:bottom-12 left-0 right-0 z-40 px-6 lg:px-12 flex justify-start items-center pointer-events-none">
                 <div className="flex gap-2 pointer-events-auto items-center">
                     {bgImages.map((_, idx) => (
                         <div
@@ -115,15 +130,6 @@ const Hero = ({ lang = 'ru' }) => {
                             className={`cursor-pointer transition-all duration-500 rounded-full ${idx === current ? 'w-8 lg:w-16 h-[3px] bg-[#0061A4]' : 'w-4 lg:w-8 h-[2px] bg-white/20'}`}
                         />
                     ))}
-                </div>
-
-                <div className="flex gap-3 pointer-events-auto">
-                    <button onClick={prevSlide} className="w-10 h-10 lg:w-12 lg:h-12 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#0061A4] hover:border-[#0061A4] backdrop-blur-md transition-all active:scale-90">
-                        <ChevronLeft size={20} />
-                    </button>
-                    <button onClick={nextSlide} className="w-10 h-10 lg:w-12 lg:h-12 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#0061A4] hover:border-[#0061A4] backdrop-blur-md transition-all active:scale-90">
-                        <ChevronRight size={20} />
-                    </button>
                 </div>
             </div>
         </section>
