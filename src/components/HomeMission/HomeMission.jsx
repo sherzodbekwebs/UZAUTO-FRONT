@@ -8,7 +8,8 @@ import {
     Cpu,
     Users,
     BarChart3,
-    Clock
+    Clock,
+    X 
 } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -29,7 +30,7 @@ const translations = {
         badgeMarket: "ЛЕТ НА РЫНКЕ"
     },
     uz: {
-        name: "XRP «UzAuto Trailer» MCHJ",
+        name: "«UzAuto Trailer» MCHJ XK",
         mission: "Innovatsiyalar va tizimli takomillashtirish orqali mijozlar muvaffaqiyatiga hissa qo'shish.",
         features: [
             { title: "Ishlab chiqarish", text: "Tijorat texnikasini ishlab chiqarish va loyihalashning zamonaviy usullari;", icon: Settings },
@@ -43,7 +44,7 @@ const translations = {
         badgeMarket: "YIL BOZORDA"
     },
     en: {
-        name: "FE «UzAuto Trailer» LLC",
+        name: "«UzAuto Trailer» FE LLC",
         mission: "An inexhaustible desire to contribute to our clients' success through innovation and continuous improvement.",
         features: [
             { title: "Production", text: "Modern methods of production and design of commercial vehicles;", icon: Settings },
@@ -59,8 +60,9 @@ const translations = {
 };
 
 const HomeMission = ({ lang = 'ru' }) => {
-    const [missionImages, setMissionImages] = useState(["/1.jpg", "/2.jpg", "/3.png", "/4.png", "/5.png"]);
+    const [missionImages, setMissionImages] = useState([]);
     const [index, setIndex] = useState(0);
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
     const t = translations[lang] || translations.ru;
 
     useEffect(() => {
@@ -85,12 +87,12 @@ const HomeMission = ({ lang = 'ru' }) => {
     }, []);
 
     useEffect(() => {
-        if (missionImages.length === 0) return;
+        if (missionImages.length === 0 || isViewerOpen) return;
         const interval = setInterval(() => {
             setIndex((prev) => (prev + 1) % missionImages.length);
         }, 5000);
         return () => clearInterval(interval);
-    }, [index, missionImages.length]);
+    }, [index, missionImages.length, isViewerOpen]);
 
     const next = () => setIndex((index + 1) % missionImages.length);
     const prev = () => setIndex((index - 1 + missionImages.length) % missionImages.length);
@@ -123,12 +125,13 @@ const HomeMission = ({ lang = 'ru' }) => {
 
                     {/* IMAGE SECTION */}
                     <div className="lg:col-span-5 relative">
-                        <div className="relative aspect-[3/2] overflow-hidden rounded-[20px] md:rounded-[30px] shadow-xl bg-gray-200 border-2 md:border-4 border-white">
+                        <div className="relative aspect-[3/2] overflow-hidden rounded-[20px] md:rounded-[30px] shadow-xl bg-gray-200 border-2 md:border-4 border-white cursor-pointer group">
                             <AnimatePresence initial={false}>
                                 {missionImages.length > 0 && (
                                     <motion.img
                                         key={index}
                                         src={missionImages[index]}
+                                        onClick={() => setIsViewerOpen(true)}
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
@@ -138,9 +141,8 @@ const HomeMission = ({ lang = 'ru' }) => {
                                 )}
                             </AnimatePresence>
 
-                            {/* IXCHAMLASHTIRILGAN BADGE (11 yillik yozuvi) */}
-                            <div className="absolute top-3 left-3 md:top-5 md:left-5 bg-black/30 backdrop-blur-md border border-white/30 px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl text-white shadow-lg z-10 flex flex-col justify-center items-center">
-                                {/* O'lchamlar ancha kichraytirildi */}
+                            {/* Badge */}
+                            <div className="absolute top-3 left-3 md:top-5 md:left-5 bg-black/30 backdrop-blur-md border border-white/30 px-3 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl text-white shadow-lg z-10 flex flex-col justify-center items-center pointer-events-none">
                                 <div className="text-xl md:text-3xl font-black italic leading-none">
                                     {t.badgeYear}
                                 </div>
@@ -149,16 +151,16 @@ const HomeMission = ({ lang = 'ru' }) => {
                                 </div>
                             </div>
 
-                            {/* RESPONSIVE ARROWS (Knopkalar) */}
+                            {/* Arrows */}
                             <div className="absolute bottom-3 right-3 md:bottom-5 md:right-5 flex gap-1.5 md:gap-2 z-10">
                                 <button
-                                    onClick={prev}
+                                    onClick={(e) => { e.stopPropagation(); prev(); }}
                                     className="p-1.5 md:p-2 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md rounded-full transition-all cursor-pointer shadow-lg active:scale-90"
                                 >
                                     <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                                 </button>
                                 <button
-                                    onClick={next}
+                                    onClick={(e) => { e.stopPropagation(); next(); }}
                                     className="p-1.5 md:p-2 bg-white/20 hover:bg-white text-white hover:text-black backdrop-blur-md rounded-full transition-all cursor-pointer shadow-lg active:scale-90"
                                 >
                                     <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
@@ -190,9 +192,51 @@ const HomeMission = ({ lang = 'ru' }) => {
                             </motion.div>
                         ))}
                     </div>
-
                 </div>
             </div>
+
+            {/* FULLSCREEN IMAGE VIEWER (MODAL) - z-index 9999 qilingan */}
+            <AnimatePresence>
+                {isViewerOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-10"
+                    >
+                        {/* Close button */}
+                        <button 
+                            onClick={() => setIsViewerOpen(false)}
+                            className="absolute top-5 right-5 text-white/50 hover:text-white p-2 transition-colors cursor-pointer z-[10000]"
+                        >
+                            <X size={36} />
+                        </button>
+
+                        {/* Navigation inside viewer */}
+                        <button 
+                            onClick={prev}
+                            className="absolute left-2 md:left-5 text-white/50 hover:text-white p-3 transition-colors cursor-pointer z-[10000]"
+                        >
+                            <ChevronLeft size={48} />
+                        </button>
+
+                        <motion.img
+                            key={`viewer-${index}`}
+                            src={missionImages[index]}
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
+                        />
+
+                        <button 
+                            onClick={next}
+                            className="absolute right-2 md:right-5 text-white/50 hover:text-white p-3 transition-colors cursor-pointer z-[10000]"
+                        >
+                            <ChevronRight size={48} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 };

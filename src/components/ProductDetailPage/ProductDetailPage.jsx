@@ -11,6 +11,19 @@ function cn(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
+// ── 1. SKELETON ANIMATION CSS ──
+const skeletonStyles = `
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f6f7f8 25%, #edeef1 50%, #f6f7f8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+`;
+
 // ── Shared design system components ──
 const ScanlineOverlay = () => (
     <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
@@ -21,14 +34,14 @@ const ScanlineOverlay = () => (
     />
 );
 
-const HudCorner = ({ position = 'tl', size = 16, color = '#0061A4' }) => {
+const HudCorner = ({ position = 'tl', size = 16, color = '#0061A4', radius = '12px' }) => {
     const styles = {
-        tl: { top: 0, left: 0, borderTop: `2px solid ${color}`, borderLeft: `2px solid ${color}` },
-        tr: { top: 0, right: 0, borderTop: `2px solid ${color}`, borderRight: `2px solid ${color}` },
-        bl: { bottom: 0, left: 0, borderBottom: `2px solid ${color}`, borderLeft: `2px solid ${color}` },
-        br: { bottom: 0, right: 0, borderBottom: `2px solid ${color}`, borderRight: `2px solid ${color}` },
+        tl: { top: 0, left: 0, borderTop: `2px solid ${color}`, borderLeft: `2px solid ${color}`, borderTopLeftRadius: radius },
+        tr: { top: 0, right: 0, borderTop: `2px solid ${color}`, borderRight: `2px solid ${color}`, borderTopRightRadius: radius },
+        bl: { bottom: 0, left: 0, borderBottom: `2px solid ${color}`, borderLeft: `2px solid ${color}`, borderBottomLeftRadius: radius },
+        br: { bottom: 0, right: 0, borderBottom: `2px solid ${color}`, borderRight: `2px solid ${color}`, borderBottomRightRadius: radius },
     };
-    return <span style={{ position: 'absolute', width: size, height: size, ...styles[position] }} />;
+    return <span style={{ position: 'absolute', width: size, height: size, ...styles[position], transition: 'all 0.3s ease' }} />;
 };
 
 const GlitchText = ({ children, className }) => (
@@ -64,7 +77,8 @@ const ProductDetailPage = () => {
             } catch (err) {
                 console.error(err);
             } finally {
-                setLoading(false);
+                // Silliqroq o'tish uchun biroz kutamiz
+                setTimeout(() => setLoading(false), 600);
             }
         };
         fetchProduct();
@@ -78,27 +92,55 @@ const ProductDetailPage = () => {
         return obj[`${field}Ru`] || obj[`${field}Uz`] || '---';
     };
 
-    // Loading
+    // ── 2. MODIFIED LOADING WITH FULL PAGE SKELETON ──
     if (loading) return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4"
-            style={{ backgroundColor: '#ffffff', fontFamily: "'Barlow Condensed', sans-serif" }}>
+        <div className="min-h-screen bg-white overflow-hidden">
+            <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+                * { font-family: 'Roboto', sans-serif !important; }
+                ${skeletonStyles}
+            `}</style>
             <ScanlineOverlay />
-            <div className="relative w-12 h-12">
-                <HudCorner position="tl" size={10} />
-                <HudCorner position="tr" size={10} />
-                <HudCorner position="bl" size={10} />
-                <HudCorner position="br" size={10} />
-                <div className="absolute inset-3 border-2 border-t-[#0061A4] border-gray-100 rounded-full animate-spin" />
+            
+            {/* Top nav skeleton */}
+            <div className="h-14 border-b border-gray-100 px-16 flex items-center justify-between">
+                <div className="w-32 h-4 skeleton rounded" />
+                <div className="w-64 h-4 skeleton rounded hidden md:block" />
             </div>
-            <p className="text-[9px] tracking-[0.35em] uppercase text-gray-400 font-bold" style={{ fontFamily: "'Share Tech Mono', monospace" }}>
-                // LOADING_DATA
-            </p>
+
+            {/* Hero Strip Skeleton */}
+            <div className="pt-32 pb-10 px-16 border-b border-gray-100 bg-[#fcfdfe]">
+                <div className="w-48 h-4 skeleton rounded mb-4" />
+                <div className="w-full max-w-2xl h-16 skeleton rounded-xl mb-8" />
+                <div className="w-32 h-6 skeleton rounded-full" />
+            </div>
+
+            {/* Main Content Skeleton */}
+            <div className="max-w-[1600px] mx-auto px-16 py-14 grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div className="lg:col-span-7 space-y-8">
+                    <div className="aspect-[4/3] w-full skeleton rounded-[32px]" />
+                    <div className="flex gap-3">
+                        {[1, 2, 3, 4].map(i => <div key={i} className="w-24 h-20 skeleton rounded-xl" />)}
+                    </div>
+                    <div className="h-40 w-full skeleton rounded-2xl" />
+                </div>
+                <div className="lg:col-span-5 space-y-8">
+                    <div className="grid grid-cols-2 gap-4">
+                        {[1, 2, 3, 4].map(i => <div key={i} className="h-24 skeleton rounded-2xl" />)}
+                    </div>
+                    <div className="h-48 w-full skeleton rounded-3xl" />
+                    <div className="h-32 w-full skeleton rounded-2xl" />
+                </div>
+            </div>
         </div>
     );
 
     if (!product) return (
-        <div className="min-h-screen flex items-center justify-center font-bold text-gray-400"
-            style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+        <div className="min-h-screen flex items-center justify-center font-bold text-gray-400 font-roboto">
+            <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+                * { font-family: 'Roboto', sans-serif !important; }
+            `}</style>
             MAHSULOT TOPILMADI
         </div>
     );
@@ -138,11 +180,10 @@ const ProductDetailPage = () => {
 
     return (
         <div
-            className="min-h-screen text-[#1A1C1E] overflow-x-hidden"
+            className="min-h-screen text-[#1A1C1E] overflow-x-hidden font-roboto"
             style={{
                 backgroundColor: '#ffffff',
                 backgroundImage: `radial-gradient(ellipse 100% 60% at 50% -10%, rgba(0,97,164,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 90% 80%, rgba(0,97,164,0.05) 0%, transparent 60%)`,
-                fontFamily: "'Barlow Condensed', sans-serif",
             }}
         >
             {/* 🛡️ SEO HELMET SECTION */}
@@ -158,15 +199,17 @@ const ProductDetailPage = () => {
             </Helmet>
 
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Share+Tech+Mono&display=swap');
-                * { box-sizing: border-box; }
-                .mono { font-family: 'Share Tech Mono', monospace; }
+                @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Share+Tech+&display=swap');
+                * { box-sizing: border-box; font-family: 'Roboto', sans-serif !important; }
+                .font-roboto { font-family: 'Roboto', sans-serif !important; }
+                . { font-family: 'Share Tech ', space !important; }
                 .scrollbar-hide::-webkit-scrollbar { display: none; }
                 .grid-bg { background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 60px 60px; }
                 .thumb-btn { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); }
                 .thumb-btn:hover { transform: translateY(-2px); }
                 .spec-row:hover .spec-key { color: #1A1C1E; }
                 .spec-row:hover .spec-val { color: #0061A4; }
+                ${skeletonStyles}
             `}</style>
 
             <ScanlineOverlay />
@@ -179,21 +222,21 @@ const ProductDetailPage = () => {
                     className="flex items-center gap-2 text-[10px] font-bold text-gray-400 hover:text-[#0061A4] uppercase tracking-widest transition-all group"
                 >
                     <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="mono font-normal">//</span> {lang === 'ru' ? 'КАТАЛОГ' : 'KATALOG'}
+                    <span className=" font-normal"></span> {lang === 'ru' ? 'КАТАЛОГ' : 'KATALOG'}
                 </button>
 
                 <div className="hidden sm:flex items-center gap-2">
                     <Signal size={10} className="text-blue-500 animate-pulse" />
-                    <span className="mono text-[9px] text-gray-300 uppercase tracking-[0.2em]">
+                    <span className=" text-[9px] text-gray-300 uppercase tracking-[0.2em]">
                         {getField(product.category, 'title')}
                     </span>
                     <ChevronRight size={10} className="text-gray-200" />
-                    <span className="mono text-[9px] text-[#0061A4] uppercase tracking-[0.2em]">
+                    <span className=" text-[9px] text-[#0061A4] uppercase tracking-[0.2em]">
                         {product.brand?.name}
                     </span>
                 </div>
 
-                <span className="mono text-[9px] text-gray-300 uppercase tracking-widest hidden lg:block">
+                <span className=" text-[9px] text-gray-300 uppercase tracking-widest hidden lg:block">
                     ID_{product.id?.substring(0, 8)}
                 </span>
             </nav>
@@ -202,10 +245,10 @@ const ProductDetailPage = () => {
             <section className="relative overflow-hidden border-b border-gray-100 pt-32 lg:pt-40 pb-10 px-6 lg:px-16"
                 style={{ backgroundColor: '#fcfdfe' }}>
                 <div className="absolute inset-0 grid-bg opacity-100" />
-                <div className="relative z-10 max-w-[1600px] mx-auto">
+                <div className="relative z-10 max-w-[1600px] mx-auto font-roboto">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="w-8 h-px bg-[#0061A4]" />
-                        <span className="mono text-[#0061A4] text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em]">
+                        <span className=" text-[#0061A4] text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em]">
                             {product.brand?.name} — {getField(product.category, 'title')}
                         </span>
                     </div>
@@ -236,7 +279,7 @@ const ProductDetailPage = () => {
             </section>
 
             {/* ── MAIN CONTENT ── */}
-            <div className="max-w-[1600px] mx-auto px-6 lg:px-16 py-10 lg:py-14">
+            <div className="max-w-[1600px] mx-auto px-6 lg:px-16 py-10 lg:py-14 font-roboto">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
 
                     {/* ── IMAGE COLUMN ── */}
@@ -265,7 +308,7 @@ const ProductDetailPage = () => {
                             </div>
 
                             <div className="absolute bottom-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 shadow-sm">
-                                <span className="mono text-[9px] text-gray-400 uppercase tracking-widest font-bold">
+                                <span className=" text-[9px] text-gray-400 uppercase tracking-widest font-bold">
                                     {String(allImages.indexOf(activeImg) + 1).padStart(2, '0')} / {String(allImages.length).padStart(2, '0')}
                                 </span>
                             </div>
@@ -307,8 +350,8 @@ const ProductDetailPage = () => {
                             <HudCorner position="br" size={10} />
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-4 h-px bg-[#0061A4]" />
-                                <span className="mono text-gray-400 text-[10px] tracking-[0.3em] uppercase">
-                                    // {lang === 'uz' ? 'Mahsulot haqida' : lang === 'ru' ? 'Описание' : 'Description'}
+                                <span className=" text-gray-400 text-[10px] tracking-[0.3em] uppercase">
+                                    {lang === 'uz' ? 'Mahsulot haqida' : lang === 'ru' ? 'Описание' : 'Description'}
                                 </span>
                             </div>
                             <p className="text-gray-500 text-base sm:text-lg leading-relaxed font-medium whitespace-pre-wrap">
@@ -337,8 +380,7 @@ const ProductDetailPage = () => {
                         {product.techSpecs?.length > 0 && (
                             <div>
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className="w-4 h-px bg-[#0061A4]" />
-                                    <span className="mono text-gray-400 text-[10px] tracking-[0.3em] uppercase">// SPEC_OVERVIEW</span>
+                                    <div />
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                     {product.techSpecs.slice(0, 4).map((spec, i) => (
@@ -349,7 +391,7 @@ const ProductDetailPage = () => {
                                             <p className="text-gray-600 text-[8px] sm:text-[9px] tracking-widest uppercase mb-2 leading-tight font-bold opacity-70">
                                                 {getField(spec, 'key')}
                                             </p>
-                                            <p className="text-[#1A1C1E] font-bold text-[13px] sm:text-[15px] uppercase tracking-tight leading-tight">
+                                            <p className="text-[#1A1C1E] font-bold text-[13px] sm:text-[15px] capitalize tracking-tight leading-tight">
                                                 {getField(spec, 'val')}
                                             </p>
                                         </div>
@@ -368,10 +410,10 @@ const ProductDetailPage = () => {
 
                             <div className="relative z-10 space-y-8">
                                 <div>
-                                    <p className="mono text-gray-400 text-[10px] tracking-widest uppercase font-bold mb-2">
+                                    <p className=" text-gray-400 text-[10px] tracking-widest uppercase font-bold mb-2">
                                         {t('price')}
                                     </p>
-                                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tighter italic tabular-nums">
+                                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tighter  tabular-nums">
                                         {product.price
                                             ? `${product.price} ${lang === 'ru' ? 'сум' : "so'm"}`
                                             : t('call_price')}
@@ -394,8 +436,8 @@ const ProductDetailPage = () => {
                         {product.advantages?.length > 0 && (
                             <div>
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className="w-4 h-px bg-[#0061A4]" />
-                                    <span className="mono text-gray-400 text-[10px] tracking-[0.3em] uppercase">// ADVANTAGES</span>
+                                    <div />
+                                    {/* <span className=" text-gray-400 text-[10px] tracking-[0.3em] uppercase">ADVANTAGES</span> */}
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {product.advantages.map((adv) => (
@@ -413,7 +455,7 @@ const ProductDetailPage = () => {
                                             ) : (
                                                 <ShieldCheck size={18} className="text-gray-300 group-hover:text-[#0061A4] transition-colors shrink-0" />
                                             )}
-                                            <span className="text-[10px] sm:text-[11px] font-bold text-gray-700 group-hover:text-[#1A1C1E] uppercase leading-tight tracking-wide transition-colors">
+                                            <span className="text-[10px] sm:text-[11px] font-bold text-gray-700 group-hover:text-[#1A1C1E] capitalize leading-tight tracking-wide transition-colors">
                                                 {getField(adv, 'title')}
                                             </span>
                                         </div>
@@ -450,15 +492,11 @@ const ProductDetailPage = () => {
 
                 {/* ── TECH SPECS SECTIONS ── */}
                 {specSections.length > 0 && (
-                    <div className="mt-20 lg:mt-32 pt-16 border-t border-gray-100">
+                    <div className="mt-20 lg:mt-32 pt-16 border-t border-gray-100 font-roboto">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
                             <div>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-8 h-px bg-[#0061A4]" />
-                                    <span className="mono text-[#0061A4] text-[10px] font-bold uppercase tracking-[0.25em]">
-                                        // TECH_SPECS
-                                    </span>
-                                    <Signal size={12} className="text-blue-500 animate-pulse" />
+                                    <div  />
                                 </div>
                                 <h2 className="text-[36px] sm:text-[42px] lg:text-[56px] font-bold uppercase leading-[1.1] tracking-tight">
                                     <span className="text-[#1A1C1E]">
@@ -471,10 +509,10 @@ const ProductDetailPage = () => {
                                 </h2>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="mono text-[#0061A4] text-3xl font-bold">
+                                <span className=" text-[#0061A4] text-3xl font-bold">
                                     {String(specSections.length).padStart(2, '0')}
                                 </span>
-                                <span className="text-gray-300 text-sm uppercase tracking-widest font-bold"> / {lang === 'uz' ? 'bo\'lim' : 'секций'}</span>
+                                <span className="text-gray-300 text-sm uppercase tracking-widest font-bold font-roboto"> / {lang === 'uz' ? 'bo\'lim' : 'секций'}</span>
                             </div>
                         </div>
 
@@ -507,10 +545,10 @@ const ProductDetailPage = () => {
                                                     si < section.specs.length - 1 ? "border-b border-gray-50" : ""
                                                 )}
                                             >
-                                                <span className="spec-key text-gray-800 text-[10px] sm:text-[11px] uppercase transition-colors duration-200 opacity-70">
+                                                <span className="spec-key text-gray-800 text-[10px] sm:text-[11px] capitalize transition-colors duration-200 opacity-70">
                                                     {getField(spec, 'key')}
                                                 </span>
-                                                <span className="spec-val text-[#1A1C1E] font-bold text-[11px] sm:text-[12px] uppercase text-right transition-colors duration-200">
+                                                <span className="spec-val text-[#1A1C1E] font-bold text-[11px] sm:text-[12px] capitalize text-right transition-colors duration-200">
                                                     {getField(spec, 'val')}
                                                 </span>
                                             </div>
@@ -524,7 +562,7 @@ const ProductDetailPage = () => {
             </div>
 
             {/* ── FOOTER CTA ── */}
-            <section className="mt-20 lg:mt-32 relative overflow-hidden"
+            <section className="mt-20 lg:mt-32 relative overflow-hidden font-roboto"
                 style={{ backgroundColor: '#0061A4' }}>
                 <div className="absolute inset-0 grid-bg opacity-[0.07]" />
                 <div className="absolute inset-0"
@@ -535,8 +573,8 @@ const ProductDetailPage = () => {
                         <div>
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="w-8 h-px bg-white/40" />
-                                <span className="mono text-white/40 text-[10px] font-bold uppercase tracking-[0.25em]">
-                                    // GET_IN_TOUCH
+                                <span className=" text-white/40 text-[10px] font-bold uppercase tracking-[0.25em]">
+                                     GET_IN_TOUCH
                                 </span>
                             </div>
                             <h2 className="text-[32px] sm:text-[42px] lg:text-[60px] font-bold uppercase leading-none tracking-tight text-white mb-6">

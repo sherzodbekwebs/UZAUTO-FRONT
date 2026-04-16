@@ -9,7 +9,7 @@ const translations = {
     },
     uz: {
         infoService: "Axborot-ma'lumot xizmati",
-        centerName: "Yagona call-markaz",
+        centerName: "Yagona qo'ng'iroqlar markazi",
     },
     en: {
         infoService: "Information and reference service",

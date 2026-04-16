@@ -196,7 +196,7 @@ const Navbar = () => {
             `}</style>
 
             <nav className="navbar-roboto-container fixed top-0 left-0 w-full z-[1000] bg-white/90 backdrop-blur-lg border-b border-gray-100 h-16 lg:h-20 transition-all duration-300">
-                <div className="max-w-[1440px] mx-auto h-full flex items-center justify-between px-4 lg:px-12">
+                <div className="max-w-[1440px] mx-auto h-full flex items-center justify-between px-4 ">
                     <div className="flex items-center shrink-0">
                         <Link to="/"><img src={logo} alt="Logo" className="h-8 lg:h-11 w-auto rounded-lg object-contain cursor-pointer" /></Link>
                     </div>

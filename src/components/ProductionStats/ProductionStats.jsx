@@ -1,63 +1,106 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import buildingImg from '../../../public/bgcompany.png';
+import API from '../../api/axios'; // API importi qo'shildi
 
-// translations o'sha-o'sha...
 const translations = {
     ru: {
         title: "ПРОИЗВОДСТВЕННЫЕ ПОКАЗАТЕЛИ",
-        stats: [
-            { label: "Большегрузные автомобили", value: 4647 },
-            { label: "Полуприцепы", value: 4958 },
-            { label: "Прицепы", value: 719 },
-            { label: "Надстройки для шасси", value: 5932 },
-            { label: "Собственные конструкторские разработки", value: 500 },
-        ]
+        labels: {
+            trucks: "Большегрузные автомобили",
+            semiTrailers: "Полуприцепы",
+            trailers: "Прицепы",
+            superstructures: "Надстройки для шасси",
+            projects: "Собственные конструкторские разработки"
+        }
     },
     uz: {
         title: "ISHLAB CHIQARISH KO'RSATKICHLARI",
-        stats: [
-            { label: "Og'ir yuk avtomobillari", value: 4647 },
-            { label: "Yarim tirkamalar", value: 4958 },
-            { label: "Tirkamalar", value: 719 },
-            { label: "Shassi ustqurmalari", value: 5932 },
-            { label: "O'zimizning loyihalar", value: 500 },
-        ]
+        labels: {
+            trucks: "Og'ir yuk avtomobillari",
+            semiTrailers: "Yarim tirkamalar",
+            trailers: "Tirkamalar",
+            superstructures: "Shassi ustqurmalari",
+            projects: "O'zimizning loyihalar"
+        }
     },
     en: {
         title: "PRODUCTION PERFORMANCE",
-        stats: [
-            { label: "Heavy Duty Trucks", value: 4647 },
-            { label: "Semi-trailers", value: 4958 },
-            { label: "Trailers", value: 719 },
-            { label: "Chassis Superstructures", value: 5932 },
-            { label: "In-house Developments", value: 500 },
-        ]
+        labels: {
+            trucks: "Heavy Duty Trucks",
+            semiTrailers: "Semi-trailers",
+            trailers: "Trailers",
+            superstructures: "Chassis Superstructures",
+            projects: "In-house Developments"
+        }
     }
 };
 
 const Counter = ({ value }) => {
     const [count, setCount] = useState(0);
+    
     useEffect(() => {
+        // 🛠️ TO'G'RILASH: Raqam orasidagi bo'shliqlarni olib tashlaymiz
+        // value "4 647" bo'lsa, u "4647" ga aylanadi
+        const stringValue = String(value).replace(/\s/g, '');
+        const end = parseInt(stringValue) || 0;
+        
+        if (end === 0) { setCount(0); return; }
+        
         let start = 0;
-        const end = parseInt(value);
         let duration = 2000;
+        let steps = 50;
+        let increment = Math.ceil(end / steps);
+        
         let counter = setInterval(() => {
-            start += Math.ceil(end / 50);
-            if (start > end) {
+            start += increment;
+            if (start >= end) {
                 setCount(end);
                 clearInterval(counter);
             } else {
                 setCount(start);
             }
-        }, duration / 50);
+        }, duration / steps);
+        
         return () => clearInterval(counter);
     }, [value]);
-    return <span>{count.toLocaleString()}</span>;
+
+    return <span>{count.toLocaleString('fr-FR').replace(',', ' ')}</span>;
 };
 
 const ProductionStats = ({ lang = 'ru' }) => {
     const t = translations[lang] || translations.ru;
+    const [stats, setStats] = useState([]);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await API.get('/settings');
+                const data = response.data;
+
+                const mapping = [
+                    { label: t.labels.trucks, key: "Og'ir yuk avtomobillari" },
+                    { label: t.labels.semiTrailers, key: "Yarim tirkamalar" },
+                    { label: t.labels.trailers, key: "Tirkamalar" },
+                    { label: t.labels.superstructures, key: "Shassi ustqurmalari" },
+                    { label: t.labels.projects, key: "O'zimizning loyihalar" },
+                ];
+
+                const formattedStats = mapping.map(m => {
+                    const found = data.find(item => item.key === m.key);
+                    return {
+                        label: m.label,
+                        value: found ? found.value : "0"
+                    };
+                });
+
+                setStats(formattedStats);
+            } catch (err) {
+                console.error("Stats fetch error:", err);
+            }
+        };
+        fetchStats();
+    }, [lang]);
 
     return (
         <section id="stats-section" className="relative w-full py-16 lg:py-32 overflow-hidden bg-[#F8FAFC]">
@@ -67,12 +110,9 @@ const ProductionStats = ({ lang = 'ru' }) => {
                     className="w-full h-full object-cover opacity-20"
                     alt="UzAuto Trailer Factory"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b" />
             </div>
 
             <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-16">
-                
-                {/* Title qismi */}
                 <div className="mb-12 lg:mb-20 text-center lg:text-left">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -93,9 +133,8 @@ const ProductionStats = ({ lang = 'ru' }) => {
                     </motion.h2>
                 </div>
 
-                {/* Stats Grid - O'ZGARISH SHUYERDA: grid-cols-2 bo'ldi */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10 lg:gap-8">
-                    {t.stats.map((stat, index) => (
+                    {stats.map((stat, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 20 }}
