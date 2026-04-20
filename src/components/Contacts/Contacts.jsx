@@ -97,15 +97,16 @@ const Contacts = ({ lang = 'ru' }) => {
     };
 
     const socialLinks = [
-        { name: "Telegram", url: "https://t.me/uatproductsbot", icon: <TelegramIcon size={20} />, color: "hover:bg-blue-500" },
-        { name: "Instagram", url: "https://www.instagram.com/uzautotrailer_official", icon: <Instagram size={20} />, color: "hover:bg-pink-600" },
-        { name: "Facebook", url: "https://www.facebook.com/UzAutoTrailerofficial", icon: <Facebook size={20} />, color: "hover:bg-blue-700" },
-        { name: "YouTube", url: "https://www.youtube.com/@UzAutoTrailer/videos", icon: <Youtube size={20} />, color: "hover:bg-red-600" }
+        { name: "Telegram", url: "https://t.me/uatproductsbot", icon: <TelegramIcon size={24} />, brandColor: "#229ED9" },
+        { name: "Instagram", url: "https://www.instagram.com/uzautotrailer_official", icon: <Instagram size={24} />, brandColor: "#E1306C" },
+        { name: "Facebook", url: "https://www.facebook.com/UzAutoTrailerofficial", icon: <Facebook size={24} />, brandColor: "#1877F2" },
+        { name: "YouTube", url: "https://www.youtube.com/@UzAutoTrailer/videos", icon: <Youtube size={24} />, brandColor: "#FF0000" }
     ];
 
+    // 🚀 MAP URLS - ll va pt koordinatalari bir xil qilindi (Markazlashtirish uchun)
     const mapUrls = {
-        tashkent: "https://yandex.uz/map-widget/v1/?ll=69.31980%2C41.319700&z=17&pt=69.31980,41.31940,pm2rdm",
-        samarkand: "https://yandex.uz/map-widget/v1/?ll=67.076356%2C39.690112&z=17&pt=67.076356,39.690112,pm2rdm"
+        tashkent: "https://yandex.uz/map-widget/v1/?ll=69.31980%2C41.31940&z=19&pt=69.31980,41.31940,pm2rdm",
+        samarkand: "https://yandex.uz/map-widget/v1/?ll=67.076356%2C39.690112&z=19&pt=67.076356,39.690112,pm2rdm"
     };
 
     return (
@@ -148,7 +149,6 @@ const Contacts = ({ lang = 'ru' }) => {
 
                         {/* Contacts & Socials Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Contact Box */}
                             <div className="space-y-6">
                                 <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-4">
                                     <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Phone size={14} className="text-[#0061A4]" /> {t.callCenter}</div>
@@ -160,14 +160,13 @@ const Contacts = ({ lang = 'ru' }) => {
                                 </div>
                             </div>
 
-                            {/* Social Media Box */}
                             <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm flex flex-col justify-between">
                                 <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Globe size={14} className="text-[#0061A4]" /> {t.social_title}</div>
                                 <div className="grid grid-cols-2 gap-4 mt-6">
                                     {socialLinks.map((social, i) => (
                                         <a key={i} href={social.url} target="_blank" rel="noreferrer"
-                                            className={`flex items-center justify-center p-4 bg-gray-50 rounded-2xl text-gray-400 ${social.color} hover:text-white transition-all duration-300 shadow-sm`}>
-                                            {social.icon}
+                                            className="flex items-center justify-center p-4 bg-gray-50 rounded-2xl transition-all duration-300 shadow-sm hover:bg-gray-100">
+                                            {React.cloneElement(social.icon, { color: social.brandColor })}
                                         </a>
                                     ))}
                                 </div>

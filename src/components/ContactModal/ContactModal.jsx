@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, CheckCircle2, User, Loader2, ShieldCheck, Send, MessageCircle, Bot, Minus } from 'lucide-react';
+// 🟢 API (axios) import qilinganini tekshiring
+import API from '../../api/axios'; 
 
 const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
 const CHANNEL_ID = import.meta.env.VITE_CHANNEL_ID;
@@ -30,7 +32,7 @@ const translations = {
         msgPlaceholder: "Xabaringizni yozing...",
         btnSend: "Yuborish",
         success: "Qabul qilindi!",
-        privacy: "Ma'lumotlar himoyalangan"
+        privacy: "Ma'molotlar himoyalangan"
     }
 };
 
@@ -56,7 +58,6 @@ const ContactModal = ({ lang = 'ru' }) => {
         if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, [messages]);
 
-    // Raqam fokus bo'lganda +998 ni qo'shish
     const handlePhoneFocus = () => {
         if (!formData.phone) {
             setFormData({ ...formData, phone: '+998 ' });
@@ -71,16 +72,31 @@ const ContactModal = ({ lang = 'ru' }) => {
         setInputValue("");
     };
 
+    // 🟢 TUG'IRLANGAN VA MUSTAHKAM SUBMIT FUNKSIYASI
     const handleCallSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+
         const telegramMsg = `📞 *ЗАКАЗ ЗВОНКА*\n\n👤 *Имя:* ${formData.name}\n📞 *Телефон:* ${formData.phone}`;
+
         try {
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            // 1. Telegramga yuborish (Buni fetchda qoldiramiz, chunki domen boshqa)
+            const tgPromise = fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ chat_id: CHANNEL_ID, text: telegramMsg, parse_mode: "Markdown" }),
             });
+
+            // 2. CRM Bazaga yozish (Loyiha ichidagi axios (API) dan foydalanamiz)
+            // Bu usul xavfsizroq va baseURL xatolarini oldini oladi
+            const dbPromise = API.post('/crm', {
+                name: formData.name,
+                phone: formData.phone
+            });
+
+            // Parallel bajarish
+            await Promise.all([tgPromise, dbPromise]);
+
             setIsSent(true);
             setTimeout(() => {
                 setIsOpenCall(false);
@@ -88,7 +104,13 @@ const ContactModal = ({ lang = 'ru' }) => {
                 setFormData({ name: '', phone: '' });
                 setIsLoading(false);
             }, 3000);
-        } catch (error) { setIsLoading(false); }
+
+        } catch (error) {
+            console.error("Yuborishda xato yuz berdi:", error?.response?.data || error.message);
+            setIsLoading(false);
+            // Foydalanuvchiga yomon ko'rinmasligi uchun:
+            alert(lang === 'ru' ? "Ошибка при отправке. Попробуйте еще раз." : "Yuborishda xatolik. Qaytadan urinib ko'ring.");
+        }
     };
 
     return (
@@ -113,7 +135,7 @@ const ContactModal = ({ lang = 'ru' }) => {
                 </motion.button>
             </div>
 
-            {/* 💬 TESLA-STYLE CHAT WINDOW */}
+            {/* ... QOLGAN QISMLAR (Chat, Modal va h.k.) O'Z HOLICHA QOLDI ... */}
             <AnimatePresence>
                 {isOpenChat && (
                     <motion.div 
@@ -155,48 +177,40 @@ const ContactModal = ({ lang = 'ru' }) => {
                 )}
             </AnimatePresence>
 
-            {/* 📞 CALL MODAL - Tuzatilgan variant */}
             <AnimatePresence>
                 {isOpenCall && (
                     <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => !isLoading && setIsOpenCall(false)} className="absolute inset-0 bg-[#0a1425]/60 backdrop-blur-md" />
-
                         <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-white w-full max-w-[400px] rounded-[32px] overflow-hidden shadow-2xl p-8 sm:p-10">
                             <button onClick={() => setIsOpenCall(false)} className="absolute top-6 right-6 text-gray-300 hover:text-gray-500 transition-colors cursor-pointer"><X size={22}/></button>
-
                             {!isSent ? (
                                 <form onSubmit={handleCallSubmit} className="space-y-6">
                                     <div className="text-center mb-8">
-                                        {/* font-black olib tashlandi */}
                                         <h2 className="text-2xl font-semibold text-[#1a2e44] mb-2">{t.requestTitle}</h2>
                                         <p className="text-gray-400 text-sm font-normal">{t.requestSubtitle}</p>
                                     </div>
                                     <div className="space-y-3">
                                         <div className="relative">
                                             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18}/>
-                                            {/* font-bold olib tashlandi */}
                                             <input required placeholder={t.nameLabel} value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-[#f8f9fb] border border-gray-100 rounded-2xl px-12 py-4 text-sm outline-none focus:bg-white focus:border-[#0054A6]/30 transition-all text-[#1a2e44]"/>
                                         </div>
                                         <div className="relative">
                                             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18}/>
-                                            {/* onFocus va value o'zgarishi orqali +998 default qilindi */}
                                             <input required type="tel" placeholder={t.phoneLabel} value={formData.phone} onFocus={handlePhoneFocus} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-[#f8f9fb] border border-gray-100 rounded-2xl px-12 py-4 text-sm outline-none focus:bg-white focus:border-[#0054A6]/30 transition-all text-[#1a2e44]"/>
                                         </div>
                                     </div>
                                     <button disabled={isLoading} className="w-full bg-[#0054A6] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-[11px] shadow-lg hover:bg-[#004488] transition-all flex items-center justify-center gap-2">
                                         {isLoading ? <Loader2 className="animate-spin" size={20}/> : t.btnSend}
                                     </button>
-
                                     <div className="flex items-center justify-center gap-2 text-gray-400 opacity-60">
-                                        <ShieldCheck size={14}/>
-                                        <span className="text-[10px] uppercase tracking-widest font-medium">{t.privacy}</span>
+                                        <ShieldCheck size={14}/><span className="text-[10px] uppercase tracking-widest font-medium">{t.privacy}</span>
                                     </div>
                                 </form>
                             ) : (
                                 <div className="text-center py-6">
                                     <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6"><CheckCircle2 size={48} className="text-green-500" /></div>
                                     <h3 className="text-2xl font-semibold text-[#1a2e44] mb-2">{t.success}</h3>
-                                    <p className="text-gray-400 font-normal">Мы скоро свяжемся с вами.</p>
+                                    <p className="text-gray-400 font-normal">{lang === 'ru' ? 'Мы скоро свяжемся с вами.' : 'Tez orada bog\'lanamiz.'}</p>
                                 </div>
                             )}
                         </motion.div>

@@ -344,36 +344,39 @@ const ProductsPage = () => {
                                     </div>
                                 </AnimatePresence>
 
-                                {/* 🔢 PAGINATION UI */}
+                                {/* 🔢 PAGINATION UI - Responsivlik uchun tahrirlandi */}
                                 {totalPages > 1 && (
-                                    <div className="flex items-center justify-center gap-2 mt-12 py-6 border-t border-gray-100">
+                                    <div className="flex items-center justify-center gap-2 mt-12 py-6 border-t border-gray-100 w-full overflow-hidden px-2">
                                         <button 
                                             onClick={() => handlePageChange(currentPage - 1)}
                                             disabled={currentPage === 1}
-                                            className="p-3 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                            className="shrink-0 p-3 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                         >
                                             <ChevronLeft size={20} />
                                         </button>
                                         
-                                        {[...Array(totalPages)].map((_, i) => (
-                                            <button
-                                                key={i + 1}
-                                                onClick={() => handlePageChange(i + 1)}
-                                                className={cn(
-                                                    "w-12 h-12 rounded-xl font-bold text-[13px] transition-all border",
-                                                    currentPage === i + 1 
-                                                        ? "bg-[#0061A4] text-white border-[#0061A4] shadow-lg shadow-blue-200" 
-                                                        : "bg-white text-slate-600 border-gray-200 hover:border-blue-400"
-                                                )}
-                                            >
-                                                {i + 1}
-                                            </button>
-                                        ))}
+                                        {/* Raqamlar uchun scrollable konteyner */}
+                                        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide no-scrollbar px-2 max-w-full">
+                                            {[...Array(totalPages)].map((_, i) => (
+                                                <button
+                                                    key={i + 1}
+                                                    onClick={() => handlePageChange(i + 1)}
+                                                    className={cn(
+                                                        "shrink-0 w-10 h-12 sm:w-12 sm:h-12 rounded-xl font-bold text-[13px] transition-all border",
+                                                        currentPage === i + 1 
+                                                            ? "bg-[#0061A4] text-white border-[#0061A4] shadow-lg shadow-blue-200" 
+                                                            : "bg-white text-slate-600 border-gray-200 hover:border-blue-400"
+                                                    )}
+                                                >
+                                                    {i + 1}
+                                                </button>
+                                            ))}
+                                        </div>
 
                                         <button 
                                             onClick={() => handlePageChange(currentPage + 1)}
                                             disabled={currentPage === totalPages}
-                                            className="p-3 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                            className="shrink-0 p-3 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                         >
                                             <ChevronRight size={20} />
                                         </button>
@@ -388,4 +391,4 @@ const ProductsPage = () => {
     );
 };
 
-export default ProductsPage; 
+export default ProductsPage;
