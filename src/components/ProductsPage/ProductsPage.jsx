@@ -75,7 +75,7 @@ const ProductsPage = () => {
     const activeCategory = searchParams.get('category') || 'all';
     const activeBrand = searchParams.get('brand') || 'all';
     const currentPage = Number(searchParams.get('page')) || 1;
-    const itemsPerPage = 6;
+    const itemsPerPage = 4;
 
     const heroRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
