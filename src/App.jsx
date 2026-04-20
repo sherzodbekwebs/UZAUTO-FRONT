@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query' // 🟢 Yangi qo'shildi
 import './App.css'
 
 // 🛡️ MARKAZIY API VA KONTEKST
 import API from './api/axios'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 
-// Komponentlar
+// Komponentlar ... (hamma importlar o'z joyida)
 import Navbar from './components/Navbar/navbar'
 import Footer from './components/Footer/Footer'
 import ContactModal from './components/ContactModal/ContactModal'
 import ScrollToTop from './components/ScrollToTop/ScrollToTop'
 
-// Sahifalar
+// Sahifalar ... (hamma importlar o'z joyida)
 import Home from './Home'
 import NewsListPage from './components/NewsListPage/NewsListPage'
 import NewsDetailPage from './components/NewsDetailPage/NewsDetailPage'
-// import SearchResults from './components/SearchResults/SearchResults'
 import Contacts from './components/Contacts/Contacts'
 import GeneralInfo from './components/GeneralInfo/GeneralInfo'
 import QualityManagement from './components/QualityManagement/QualityManagement'
@@ -36,9 +36,19 @@ import QualityAwards from './components/QualityAwards/QualityAwards'
 import Technologies from './components/Technologies/Technologies'
 import DesignBureau from './components/DesignBureau//DesignBureau'
 
-// 🚀 Routing mantiqi alohida komponentda (Context ishlashi uchun)
+// 🟢 QueryClient sozlamalari (Front-endda ma'lumotni keshda saqlash vaqti)
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 daqiqa davomida ma'lumotni keshdan oladi (API ga qayta chiqmaydi)
+      cacheTime: 1000 * 60 * 30, // Ma'lumot xotirada 30 daqiqa saqlanadi
+      refetchOnWindowFocus: false, // Tablar o'zgarganda qayta so'rov yubormaydi
+    },
+  },
+});
+
 const AppContent = () => {
-  const { lang } = useLanguage(); // Global tilni contextdan olamiz
+  const { lang } = useLanguage();
   const [dynamicRoutes, setDynamicRoutes] = useState([]);
 
   useEffect(() => {
@@ -52,7 +62,6 @@ const AppContent = () => {
       <ScrollToTop />
       <Toaster position="top-center" reverseOrder={false} />
 
-      {/* Navbar endi proplarsiz ishlaydi, u o'zi contextdan oladi */}
       <Navbar />
 
       <main className="flex-grow pt-16 lg:pt-20">
@@ -60,11 +69,11 @@ const AppContent = () => {
           <Route path="/" element={<Home lang={lang} />} />
           <Route path="/news" element={<NewsListPage lang={lang} />} />
           <Route path="/news/:id" element={<NewsDetailPage lang={lang} />} />
-          {/* <Route path="/search" element={<SearchResults lang={lang} />} /> */}
           <Route path="/contacts" element={<Contacts lang={lang} />} />
           <Route path="/products" element={<ProductsPage lang={lang} />} />
           <Route path="/product/:id" element={<ProductDetailPage lang={lang} />} />
 
+          {/* ... Boshqa barcha statik yo'llar */}
           <Route path="/page/general_information" element={<GeneralInfo lang={lang} />} />
           <Route path="/page/quality_management" element={<QualityManagement lang={lang} />} />
           <Route path="/page/history" element={<CompanyHistory lang={lang} />} />
@@ -99,11 +108,14 @@ const AppContent = () => {
 
 function App() {
   return (
-    <LanguageProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </LanguageProvider>
+    // 🟢 QueryClientProvider barcha App ni o'rab olishi kerak
+    <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </LanguageProvider>
+    </QueryClientProvider>
   );
 }
 

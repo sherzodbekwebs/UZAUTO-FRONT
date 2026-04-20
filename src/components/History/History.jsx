@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Building2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query'; // 🟢 Yangi qo'shildi
 import API, { API_URL } from '../../api/axios';
 
 const translations = {
@@ -51,43 +52,38 @@ const translations = {
 
 const CompanyHistory = ({ lang = 'ru' }) => {
     const t = translations[lang] || translations.ru;
-    const { hash } = useLocation();
     const timelineRef = useRef(null);
-
-    const [historyList, setHistoryList] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [selectedImg, setSelectedImg] = useState(null);
 
+    // 🟢 REACT QUERY: Ma'lumotlarni yuklash va keshga saqlash
+    const { data: historyList = [], isLoading } = useQuery({
+        queryKey: ['history'],
+        queryFn: async () => {
+            const response = await fetch(`${API_URL}/history`);
+            const data = await response.json();
+            return data
+                .filter(item => item.isActive)
+                .map(item => ({
+                    id: item.id,
+                    year: item.year || item.sortOrder.toString(),
+                    ru: { title: item.titleRu, desc: item.descRu },
+                    uz: { title: item.titleUz, desc: item.descUz },
+                    en: { title: item.titleEn, desc: item.descEn },
+                    images: item.image ? [`${API_URL}${item.image}`] : []
+                }));
+        },
+        staleTime: 1000 * 60 * 30, // 30 daqiqa keshda turadi
+    });
+
+    // Ma'lumot yuklangandan keyin birinchi yilni tanlab qo'yish
     useEffect(() => {
-        const fetchHistory = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(`${API_URL}/history`);
-                const data = await response.json();
+        if (historyList.length > 0 && !selectedEvent) {
+            setSelectedEvent(historyList[0]);
+        }
+    }, [historyList, selectedEvent]);
 
-                const formattedData = data
-                    .filter(item => item.isActive)
-                    .map(item => ({
-                        id: item.id,
-                        year: item.year || item.sortOrder.toString(),
-                        ru: { title: item.titleRu, desc: item.descRu },
-                        uz: { title: item.titleUz, desc: item.descUz },
-                        en: { title: item.titleEn, desc: item.descEn },
-                        images: item.image ? [`${API_URL}${item.image}`] : []
-                    }));
-
-                setHistoryList(formattedData);
-                if (formattedData.length > 0) setSelectedEvent(formattedData[0]);
-            } catch (error) {
-                console.error("Tarixni yuklashda xatolik:", error);
-            } finally {
-                // Silliq o'tish uchun biroz kechikish
-                setTimeout(() => setLoading(false), 500);
-            }
-        };
-        fetchHistory();
-    }, []);
+    const loading = isLoading;
 
     const scrollTimeline = (direction) => {
         if (timelineRef.current) {
