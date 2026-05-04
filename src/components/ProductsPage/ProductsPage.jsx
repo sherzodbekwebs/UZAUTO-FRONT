@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'; 
 import {
     ChevronLeft, ChevronRight, ArrowUpRight, Box,
     Signal, LayoutGrid, X, ChevronDown, Layers
@@ -73,13 +73,12 @@ const ProductsPage = () => {
 
     const loading = pLoading || cLoading || bLoading;
 
-    // ── 🛠️ GURUHLASH MANTIQI (Siz bergan ro'yxat bo'yicha) ──
     const groupedCategories = useMemo(() => {
         const groups = [
             { id: 'tractors', ru: 'Седельные тягачи', uz: 'Egarli tortuvchilar', en: 'Truck Tractors', match: ['Седельный тягач'] },
             { id: 'dumpers', ru: 'Автосамосвалы', uz: 'Avtosamosvallar', en: 'Dump Trucks', match: ['Автосамосвал'] },
-            { id: 'vans', ru: 'Фургоны и бортовые', uz: 'Furgon va bortli avtomobillar', en: 'Vans and Flatbed Trucks', match: ['Автофургон', 'Вахтовый автобус', 'Бортовая платформа'] },
-            { id: 'special', ru: 'Специальная техника', uz: 'Maxsus texnikalar', en: 'Special Purpose Vehicles', match: ['Автогидроподъёмник', 'Кran-Manipulyator', 'Кран-Манипулятор', 'Автокran', 'Автокран', 'Автоцистерна', 'Коммунальная техника', 'Пожарная машина'] },
+            { id: 'vans', ru: 'Фургоны и бортовые', uz: 'Furgon va bortli avtomobillar', en: 'Vans and Flatbed Trucks', match: ['Автоfurgon', 'Автофургон', 'Вахтовый автобус', 'Бортовая платформа'] },
+            { id: 'special', ru: 'Специальная техника', uz: 'Maxsus texnikalar', en: 'Special Purpose Vehicles', match: ['Автогидроподъёмник', 'Кran-Manipulyator', 'Кран-Манипулятор', 'Автокran', 'Автокran', 'Автокran', 'Автоцистерна', 'Коммунальная техника', 'Пожарная машина'] },
             { id: 'chassis', ru: 'Шасси', uz: 'Shassi', en: 'Chassis', match: ['Шасси'] },
             { id: 'trailers', ru: 'Прицепная техника', uz: 'Tirkama texnikalari', en: 'Towed Equipment', match: ['Полуприцепы', 'Прицепы'] },
             { id: 'mini-trucks', ru: 'Мини-грузовики', uz: 'Mini yuk mashinalari', en: 'Mini Trucks', match: ['Мини-грузовик'] },
@@ -105,7 +104,7 @@ const ProductsPage = () => {
         return products.filter((p) => {
             const isActiveMatch = p.isActive === true;
             const brandMatch = activeBrand === 'all' || String(p.brandId) === String(activeBrand);
-
+            
             const group = groupedCategories.find(g => g.id === activeCategory);
             if (group) {
                 const catIds = group.items.map(i => String(i.id));
@@ -160,15 +159,15 @@ const ProductsPage = () => {
             {groupedCategories.map((group) => {
                 const isGroupActive = activeCategory === group.id;
                 const isExpanded = expandedGroups[group.id] || group.items.some(cat => String(cat.id) === activeCategory);
-
+                
                 return (
                     <div key={group.id} className="space-y-1">
                         <div className={cn("flex items-center rounded-xl transition-all border", isGroupActive ? "bg-[#0061A4] text-white border-[#0061A4]" : "bg-white border-gray-100 hover:border-gray-200")}>
-                            <button onClick={() => { handleFilterChange({ category: group.id }, false); if (!isExpanded) toggleGroup(group.id); }} className="flex-1 text-left px-5 py-4 text-[12px] font-black uppercase">
+                            <button onClick={() => { handleFilterChange({ category: group.id }, false); if(!isExpanded) toggleGroup(group.id); }} className="flex-1 text-left px-5 py-4 text-[12px] font-black uppercase leading-tight">
                                 {lang === 'ru' ? group.ru : lang === 'en' ? group.en : group.uz}
                             </button>
                             {group.items.length > 0 && (
-                                <button onClick={(e) => { e.stopPropagation(); toggleGroup(group.id); }} className={cn("p-4 border-l transition-transform", isGroupActive ? "border-white/20" : "border-gray-100", isExpanded && "rotate-180")}>
+                                <button onClick={(e) => { e.stopPropagation(); toggleGroup(group.id); }} className={cn("p-4 border-l transition-transform duration-300", isGroupActive ? "border-white/20" : "border-gray-100", isExpanded && "rotate-180")}>
                                     <ChevronDown size={14} />
                                 </button>
                             )}
@@ -176,9 +175,23 @@ const ProductsPage = () => {
 
                         <AnimatePresence initial={false}>
                             {isExpanded && group.items.length > 0 && (
-                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden pl-4 flex flex-col gap-1 pt-1">
+                                <motion.div 
+                                    key={`group-content-${group.id}`}
+                                    initial={{ height: 0, opacity: 0 }} 
+                                    animate={{ height: 'auto', opacity: 1 }} 
+                                    exit={{ height: 0, opacity: 0 }} 
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className="overflow-hidden pl-4 flex flex-col gap-1 pt-1"
+                                >
                                     {group.items.map(cat => (
-                                        <button key={cat.id} onClick={() => { handleFilterChange({ category: String(cat.id) }, true); }} className={cn("flex items-center gap-3 px-5 py-3 rounded-xl text-[11px] font-bold uppercase transition-all", String(activeCategory) === String(cat.id) ? "bg-blue-50 text-[#0061A4]" : "text-gray-400 hover:text-gray-700")}>
+                                        <button 
+                                            key={cat.id} 
+                                            onClick={() => { 
+                                                setExpandedGroups(prev => ({ ...prev, [group.id]: true }));
+                                                handleFilterChange({ category: String(cat.id) }, true); 
+                                            }} 
+                                            className={cn("flex items-center gap-3 px-5 py-3 rounded-xl text-[11px] font-bold uppercase transition-all", String(activeCategory) === String(cat.id) ? "bg-blue-50 text-[#0061A4]" : "text-gray-400 hover:text-gray-700")}
+                                        >
                                             <div className="w-1 h-1 rounded-full bg-current opacity-40" />
                                             {getField(cat, 'title')}
                                         </button>
@@ -216,29 +229,32 @@ const ProductsPage = () => {
                         <div className="max-w-2xl">
                             <div className="flex items-center justify-center lg:justify-start gap-3 mb-5">
                                 <div className="w-8 h-px bg-[#0061A4]" />
-                                <span className="text-[#0061A4] text-[10px] font-bold tracking-[0.25em] uppercase">UzAuto Trailer — Catalog</span>
+                                <span className="text-[#0061A4] text-[10px] font-bold tracking-[0.25em] uppercase whitespace-nowrap">UzAuto Trailer — Catalog</span>
                                 <Signal size={12} className="text-blue-500 animate-pulse" />
                             </div>
                             <h1 className="text-[38px] sm:text-[54px] lg:text-[82px] font-bold leading-[1] tracking-tight capitalize">
                                 <GlitchText><span>{t('products')}</span></GlitchText>
                             </h1>
-                            {!loading && (
-                                <button onClick={() => setSidebarOpen(true)} className="lg:hidden mt-8 flex items-center justify-center gap-3 w-full py-4 bg-[#0061A4] text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl border-2 border-[#0061A4]">
-                                    <LayoutGrid size={16} /> {t('categories_label')}
-                                </button>
-                            )}
                         </div>
 
                         <div className="flex flex-col gap-5 lg:gap-3">
                             <div className="space-y-3">
                                 <span className="text-slate-600 text-[11px] font-bold tracking-widest uppercase"> {t('brand_filter')}</span>
                                 <div className="flex flex-wrap justify-center lg:justify-start items-center gap-2">
-                                    <button onClick={() => handleFilterChange({ brand: 'all' }, true)} className={cn("relative px-6 py-2.5 text-[11px] font-bold transition-all rounded-xl border", activeBrand === 'all' ? "text-white bg-[#0061A4] border-[#0061A4] shadow-lg" : "text-slate-700 bg-white border-slate-300 hover:border-[#0061A4]")}>{t('all')}</button>
+                                    <button onClick={() => handleFilterChange({ brand: 'all' }, true)} className={cn("relative px-6 py-2.5 text-[11px] font-bold transition-all rounded-xl border uppercase tracking-widest", activeBrand === 'all' ? "bg-[#0061A4] text-white border-[#0061A4] shadow-lg shadow-blue-200" : "bg-white text-slate-700 border-gray-100 hover:border-[#0061A4]")}>{t('all')}</button>
                                     {brands.map((b) => (
-                                        <button key={b.id} onClick={() => handleFilterChange({ brand: String(b.id) }, true)} className={cn("relative px-6 py-2.5 text-[11px] font-bold transition-all rounded-xl border", String(activeBrand) === String(b.id) ? "text-white bg-[#0061A4] border-[#0061A4] shadow-lg" : "text-slate-700 bg-white border-slate-300 hover:border-[#0061A4]")}>{b.name}</button>
+                                        <button key={b.id} onClick={() => handleFilterChange({ brand: String(b.id) }, true)} className={cn("relative px-6 py-2.5 text-[11px] font-bold transition-all rounded-xl border uppercase tracking-widest", String(activeBrand) === String(b.id) ? "bg-[#0061A4] text-white border-[#0061A4] shadow-lg shadow-blue-200" : "bg-white text-slate-700 border-gray-100 hover:border-[#0061A4]")}>{b.name}</button>
                                     ))}
                                 </div>
                             </div>
+
+                            {!loading && (
+                                <div className="flex justify-center sm:justify-start lg:hidden">
+                                    <button onClick={() => setSidebarOpen(true)} className="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-4 bg-[#0061A4] text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-blue-900/20 active:scale-95 border-2 border-[#0061A4]">
+                                        <LayoutGrid size={16}/> {t('categories_label')}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -248,10 +264,10 @@ const ProductsPage = () => {
                 {sidebarOpen && (
                     <>
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} onClick={() => setSidebarOpen(false)} className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm lg:hidden" />
-                        <motion.aside initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: 0.5, ease: "easeInOut" }} className="fixed top-0 left-0 bottom-0 z-[101] w-[80%] max-w-[320px] bg-white p-6 overflow-y-auto lg:hidden">
+                        <motion.aside initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: 0.4, ease: "easeInOut" }} className="fixed top-0 left-0 bottom-0 z-[101] w-[80%] max-w-[320px] bg-white p-6 overflow-y-auto lg:hidden">
                             <div className="flex items-center justify-between mb-8 border-b pb-4">
                                 <span className="text-xs font-black uppercase tracking-widest text-[#0061A4]">{t('categories_label')}</span>
-                                <button onClick={() => setSidebarOpen(false)} className="p-2 bg-gray-50 rounded-full"><X size={20} /></button>
+                                <button onClick={() => setSidebarOpen(false)} className="p-2 bg-gray-50 rounded-full"><X size={20}/></button>
                             </div>
                             <CategoryList />
                         </motion.aside>
@@ -259,12 +275,12 @@ const ProductsPage = () => {
                 )}
             </AnimatePresence>
 
-            <div className="max-w-[1600px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
+            <div className="max-w-[1600px] mx-auto px-6 lg:px-10 py-10 lg:py-14 font-roboto">
                 <div className="flex gap-10 items-start">
                     <aside className="hidden lg:block w-[320px] shrink-0 sticky top-32">
                         <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm space-y-6">
                             <div className="flex items-center gap-3 px-2 border-b border-gray-50 pb-4">
-                                <Layers size={18} className="text-[#0061A4]" />
+                                <Layers size={18} className="text-[#0061A4]"/>
                                 <span className="text-xs font-black uppercase tracking-widest">{t('categories_label')}</span>
                             </div>
                             <CategoryList />
@@ -293,16 +309,17 @@ const ProductsPage = () => {
                                                             <div className="flex items-center gap-3 mb-2">
                                                                 <span className="text-[#0061A4] text-[10px] font-bold capitalize">{p.brand?.name}</span>
                                                                 <div className="h-px w-4 bg-blue-200" />
+                                                                <span className="text-gray-500 text-[10px] font-bold ">ID_{p.id.substring(0, 6)}</span>
                                                             </div>
-                                                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#1A1C1E] group-hover:text-[#0061A4] transition-colors capitalize">{getField(p, 'title')}</h2>
+                                                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#0061A4] group-hover:text-blue-700 transition-colors capitalize leading-tight">{getField(p, 'title')}</h2>
                                                         </div>
 
                                                         {p.techSpecs?.length > 0 && (
                                                             <div className="grid grid-cols-2 min-[1440px]:grid-cols-4 gap-3 sm:gap-4 mb-8">
                                                                 {p.techSpecs.slice(0, 4).map((spec, i) => (
-                                                                    <div key={i} className="p-4 bg-gray-50/50 border border-gray-100 group hover:border-blue-500/30 hover:bg-blue-50/30 transition-all duration-300">
-                                                                        <p className="text-gray-600 text-[8px] sm:text-[9px] tracking-widest uppercase mb-2 leading-tight font-bold opacity-70">{getField(spec, 'key')}</p>
-                                                                        <p className="text-[#1A1C1E] font-bold text-[13px] sm:text-[15px] capitalize tracking-tight leading-tight">{getField(spec, 'val')}</p>
+                                                                    <div key={i} className="p-3 sm:p-4 bg-white border border-gray-100 rounded-lg min-h-[70px] flex flex-col shadow-sm hover:border-blue-100 transition-colors">
+                                                                        <p className="text-slate-900 font-bold text-[9px] sm:text-[10px] capitalize mb-1.5 leading-tight">{getField(spec, 'key')}</p>
+                                                                        <p className="text-black font-black text-[12px] sm:text-[14px] leading-tight capitalize">{getField(spec, 'val')}</p>
                                                                     </div>
                                                                 ))}
                                                             </div>
