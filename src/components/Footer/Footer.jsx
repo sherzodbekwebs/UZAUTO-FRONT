@@ -114,7 +114,7 @@ const Footer = ({ lang = 'ru' }) => {
                     {/* Ustunlar (Navigatsiya va Kontaktlar) */}
                     {t.columns.map((col, idx) => (
                         <div key={idx}>
-                            <h4 className="text-[13px] font-bold tracking-[0.2em] text-gray-400 uppercase mb-10">
+                            <h4 className="text-[13px] font-bold tracking-[0.2em] text-gray-400  mb-10">
                                 {col.title}
                             </h4>
                             <ul className="flex flex-col gap-6">
@@ -166,7 +166,7 @@ const Footer = ({ lang = 'ru' }) => {
                     <p className="text-[14px] font-medium text-gray-400">
                         {t.copyright}
                     </p>
-                    <div className="flex gap-10 text-[13px] font-bold text-gray-400 uppercase tracking-widest">
+                    <div className="flex gap-10 text-[13px] font-bold text-gray-400  tracking-widest">
                         <Link to="/" className="hover:text-[#0054A6] transition-colors">Privacy Policy</Link>
                         <Link to="/" className="hover:text-[#0054A6] transition-colors">Terms of Use</Link>
                     </div>

@@ -28,6 +28,7 @@ const translations = {
         phone_label: "Телефон",
         msg_placeholder: "Введите ваше сообщение...",
         send_btn: "Отправить сообщение",
+        sending_btn: "Отправка...",
         copy: "Копировать",
         view_map: "Открыть в картах",
         map_title: "Мы на карте",
@@ -53,6 +54,7 @@ const translations = {
         phone_label: "Telefon raqamingiz",
         msg_placeholder: "Xabaringizni kiriting...",
         send_btn: "Xabarni yuborish",
+        sending_btn: "Yuborilmoqda...",
         copy: "Nusxalash",
         view_map: "Xaritada ochish",
         map_title: "Xaritadagi joylashuvimiz",
@@ -78,6 +80,7 @@ const translations = {
         phone_label: "Phone number",
         msg_placeholder: "Enter your message...",
         send_btn: "Send message",
+        sending_btn: "Sending...",
         copy: "Copy",
         view_map: "Open in maps",
         map_title: "Our location on the map",
@@ -88,6 +91,10 @@ const translations = {
 const Contacts = ({ lang = 'ru' }) => {
     const t = translations[lang] || translations.ru;
     const [activeLocation, setActiveLocation] = useState('tashkent');
+    
+    // --- AMOCRM INTEGRATSIYASI UCHUN STATE VA FUNKSIYALAR ---
+    const [formData, setFormData] = useState({ name: '', phone: '', message: '' });
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -96,6 +103,31 @@ const Contacts = ({ lang = 'ru' }) => {
         toast.success(lang === 'ru' ? 'Скопировано!' : 'Nusxalandi!');
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const response = await fetch('/api/amo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                toast.success(lang === 'ru' ? 'Сообщение отправлено!' : 'Xabaringiz yuborildi!');
+                setFormData({ name: '', phone: '', message: '' }); // Formani tozalash
+            } else {
+                toast.error("Xatolik yuz berdi");
+            }
+        } catch (error) {
+            toast.error("Xatolik!");
+        } finally {
+            setLoading(false);
+        }
+    };
+    // -----------------------------------------------------
+
     const socialLinks = [
         { name: "Telegram", url: "https://t.me/uatproductsbot", icon: <TelegramIcon size={24} />, brandColor: "#229ED9" },
         { name: "Instagram", url: "https://www.instagram.com/uzautotrailer_official", icon: <Instagram size={24} />, brandColor: "#E1306C" },
@@ -103,7 +135,6 @@ const Contacts = ({ lang = 'ru' }) => {
         { name: "YouTube", url: "https://www.youtube.com/@UzAutoTrailer/videos", icon: <Youtube size={24} />, brandColor: "#FF0000" }
     ];
 
-    // 🚀 MAP URLS - ll va pt koordinatalari bir xil qilindi (Markazlashtirish uchun)
     const mapUrls = {
         tashkent: "https://yandex.uz/map-widget/v1/?ll=69.31980%2C41.31940&z=19&pt=69.31980,41.31940,pm2rdm",
         samarkand: "https://yandex.uz/map-widget/v1/?ll=67.076356%2C39.690112&z=19&pt=67.076356,39.690112,pm2rdm"
@@ -124,44 +155,41 @@ const Contacts = ({ lang = 'ru' }) => {
 
                     {/* LEFT COLUMN */}
                     <div className="lg:col-span-7 space-y-6">
-
-                        {/* Address Card */}
                         <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-6">
                             <div className="flex items-center gap-4">
                                 <div className="w-11 h-11 rounded-2xl bg-[#0061A4] flex items-center justify-center text-white shadow-lg shadow-blue-100">
                                     <MapPin size={22} />
                                 </div>
-                                <h3 className="text-lg font-bold uppercase tracking-wider">{t.our_address}</h3>
+                                <h3 className="text-lg font-bold  tracking-wider">{t.our_address}</h3>
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                                <button onClick={() => setActiveLocation('tashkent')} className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeLocation === 'tashkent' ? 'bg-[#0061A4] text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>{t.headOffice}</button>
-                                <button onClick={() => setActiveLocation('samarkand')} className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${activeLocation === 'samarkand' ? 'bg-[#0061A4] text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>{t.production}</button>
+                                <button onClick={() => setActiveLocation('tashkent')} className={`px-6 py-2 rounded-xl text-[10px] font-bold  tracking-widest transition-all ${activeLocation === 'tashkent' ? 'bg-[#0061A4] text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>{t.headOffice}</button>
+                                <button onClick={() => setActiveLocation('samarkand')} className={`px-6 py-2 rounded-xl text-[10px] font-bold  tracking-widest transition-all ${activeLocation === 'samarkand' ? 'bg-[#0061A4] text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}>{t.production}</button>
                             </div>
 
                             <p className="text-gray-600 font-normal leading-relaxed text-base">{activeLocation === 'tashkent' ? t.tashkent : t.samarkand}</p>
 
                             <div className="flex items-center gap-3">
-                                <a href={activeLocation === 'tashkent' ? "https://yandex.uz/maps/org/234745806070/" : "https://yandex.uz/maps/org/242429445745/"} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-700 transition-all shadow-md"><ExternalLink size={14} /> {t.view_map}</a>
-                                <button onClick={() => copyToClipboard(activeLocation === 'tashkent' ? t.tashkent : t.samarkand)} className="flex items-center gap-2 px-6 py-3 bg-gray-50 text-gray-500 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-100 transition-all border border-gray-100"><Copy size={14} /> {t.copy}</button>
+                                <a href={activeLocation === 'tashkent' ? "https://yandex.uz/maps/org/234745806070/" : "https://yandex.uz/maps/org/242429445745/"} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl text-[10px] font-bold  tracking-widest hover:bg-red-700 transition-all shadow-md"><ExternalLink size={14} /> {t.view_map}</a>
+                                <button onClick={() => copyToClipboard(activeLocation === 'tashkent' ? t.tashkent : t.samarkand)} className="flex items-center gap-2 px-6 py-3 bg-gray-50 text-gray-500 rounded-xl text-[10px] font-bold  tracking-widest hover:bg-gray-100 transition-all border border-gray-100"><Copy size={14} /> {t.copy}</button>
                             </div>
                         </div>
 
-                        {/* Contacts & Socials Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-6">
                                 <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-4">
-                                    <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Phone size={14} className="text-[#0061A4]" /> {t.callCenter}</div>
+                                    <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px]  tracking-widest"><Phone size={14} className="text-[#0061A4]" /> {t.callCenter}</div>
                                     <a href="tel:+998712023223" className="text-2xl font-bold hover:text-[#0061A4] transition-colors block">+998 71 202 32 23</a>
                                 </div>
                                 <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-4">
-                                    <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Mail size={14} className="text-[#0061A4]" /> Email</div>
+                                    <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px]  tracking-widest"><Mail size={14} className="text-[#0061A4]" /> Email</div>
                                     <a href="mailto:info@trailer.uz" className="text-2xl font-bold hover:text-[#0061A4] transition-colors block ">info@trailer.uz</a>
                                 </div>
                             </div>
 
                             <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm flex flex-col justify-between">
-                                <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Globe size={14} className="text-[#0061A4]" /> {t.social_title}</div>
+                                <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px]  tracking-widest"><Globe size={14} className="text-[#0061A4]" /> {t.social_title}</div>
                                 <div className="grid grid-cols-2 gap-4 mt-6">
                                     {socialLinks.map((social, i) => (
                                         <a key={i} href={social.url} target="_blank" rel="noreferrer"
@@ -170,43 +198,62 @@ const Contacts = ({ lang = 'ru' }) => {
                                         </a>
                                     ))}
                                 </div>
-                                <p className="text-[9px] text-gray-300 font-bold uppercase tracking-widest text-center mt-6 ">Follow us online</p>
+                                <p className="text-[9px] text-gray-300 font-bold  tracking-widest text-center mt-6 ">Follow us online</p>
                             </div>
                         </div>
 
-                        {/* Work Hours */}
                         <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm space-y-6">
-                            <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px] uppercase tracking-widest"><Clock size={14} className="text-[#0061A4]" /> {t.workHours}</div>
+                            <div className="flex items-center gap-3 text-gray-400 font-semibold text-[10px]  tracking-widest"><Clock size={14} className="text-[#0061A4]" /> {t.workHours}</div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="flex justify-between items-center pb-3 border-b border-gray-50"><span className="font-medium text-gray-500 text-sm">{t.weekdays_title}</span><span className="font-bold text-gray-800">{t.weekdays_time}</span></div>
-                                <div className="flex justify-between items-center pb-3 border-b border-gray-50"><span className="font-medium text-gray-500 text-sm">{t.weekend}</span><span className="font-bold text-red-500 uppercase text-[11px]">{t.closed}</span></div>
+                                <div className="flex justify-between items-center pb-3 border-b border-gray-50"><span className="font-medium text-gray-500 text-sm">{t.weekend}</span><span className="font-bold text-red-500  text-[11px]">{t.closed}</span></div>
                             </div>
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: FORM */}
+                    {/* RIGHT COLUMN: FORM (UPDATED) */}
                     <div className="lg:col-span-5">
                         <div className="bg-white p-8 lg:p-10 rounded-[40px] border border-gray-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.04)] sticky top-32">
                             <h3 className="text-2xl font-bold mb-8 ">{t.form_title}</h3>
-                            <form className="space-y-6 text-[#1a2e44]">
+                            <form className="space-y-6 text-[#1a2e44]" onSubmit={handleSubmit}>
                                 <div>
-                                    <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">{t.name_label}</label>
-                                    <input type="text" className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1" />
+                                    <label className="text-[10px] font-semibold text-gray-400  tracking-widest ml-1">{t.name_label}</label>
+                                    <input 
+                                        required
+                                        type="text" 
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                        className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1" 
+                                    />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">{t.phone_label}</label>
-                                    <input type="text" placeholder="+998 __ ___ __ __" className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1" />
+                                    <label className="text-[10px] font-semibold text-gray-400  tracking-widest ml-1">{t.phone_label}</label>
+                                    <input 
+                                        required
+                                        type="text" 
+                                        placeholder="+998 __ ___ __ __" 
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                        className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1" 
+                                    />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">Email</label>
-                                    <input type="email" placeholder="example@mail.com" className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1" />
+                                    <label className="text-[10px] font-semibold text-gray-400  tracking-widest ml-1">Сообщение</label>
+                                    <textarea 
+                                        required
+                                        rows={4} 
+                                        value={formData.message}
+                                        onChange={(e) => setFormData({...formData, message: e.target.value})}
+                                        className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1 resize-none" 
+                                        placeholder={t.msg_placeholder}
+                                    ></textarea>
                                 </div>
-                                <div>
-                                    <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest ml-1">Сообщение</label>
-                                    <textarea rows={4} className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-1 focus:ring-[#0061A4] outline-none font-medium text-sm mt-1 resize-none" placeholder={t.msg_placeholder}></textarea>
-                                </div>
-                                <button type="button" className="w-full py-5 bg-[#0061A4] text-white rounded-2xl font-bold text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-blue-900/10 hover:bg-[#004A7D] active:scale-95 transition-all flex items-center justify-center gap-3">
-                                    <Send size={16} /> {t.send_btn}
+                                <button 
+                                    type="submit" 
+                                    disabled={loading}
+                                    className="w-full py-5 bg-[#0061A4] text-white rounded-2xl font-bold text-[11px]  tracking-[0.2em] shadow-lg shadow-blue-900/10 hover:bg-[#004A7D] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+                                >
+                                    {loading ? t.sending_btn : <><Send size={16} /> {t.send_btn}</>}
                                 </button>
                             </form>
                         </div>
@@ -216,7 +263,7 @@ const Contacts = ({ lang = 'ru' }) => {
                 {/* MAP SECTION */}
                 <div className="mt-20 space-y-8">
                     <div className="text-center space-y-2">
-                        <h2 className="text-xl font-bold uppercase tracking-[0.2em] text-gray-400 ">{t.map_title}</h2>
+                        <h2 className="text-xl font-bold  tracking-[0.2em] text-gray-400 ">{t.map_title}</h2>
                         <div className="w-12 h-1 bg-gray-200 mx-auto rounded-full"></div>
                     </div>
                     <div className="bg-white p-3 rounded-[40px] border border-gray-100 shadow-sm h-[500px] overflow-hidden relative">
