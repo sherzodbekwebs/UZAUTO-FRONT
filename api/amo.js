@@ -20,23 +20,22 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify([{
                 name: `Xabar: ${name}`,
+                pipeline_id: 8390522, // Rasmdagi URL-dan olingan Pipeline ID
+                status_id: 85644878,   // <--- SIZ TOPGAN STATUS ID RAQAMI
                 _embedded: {
                     contacts: [{
                         first_name: name,
                         custom_fields_values: [
-                            {
-                                field_code: "PHONE",
-                                values: [{ value: phone, enum_code: "WORK" }]
-                            }
+                            { field_code: "PHONE", values: [{ value: phone, enum_code: "WORK" }] }
                         ]
                     }]
                 },
-                // custom_fields_values: [
-                //     {
-                //         field_id: 1047683,
-                //         values: [{ value: message }]
-                //     }
-                // ]
+                custom_fields_values: [
+                    {
+                        field_id: 1047683, // Xabar maydoni ID-si
+                        values: [{ value: message }]
+                    }
+                ]
             }])
         });
 
