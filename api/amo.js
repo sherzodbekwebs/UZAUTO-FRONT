@@ -31,12 +31,12 @@ export default async function handler(req, res) {
                         ]
                     }]
                 },
-                custom_fields_values: [
-                    {
-                        field_id: 1047683,
-                        values: [{ value: message }]
-                    }
-                ]
+                // custom_fields_values: [
+                //     {
+                //         field_id: 1047683,
+                //         values: [{ value: message }]
+                //     }
+                // ]
             }])
         });
 
