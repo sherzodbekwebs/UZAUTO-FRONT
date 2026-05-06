@@ -7,40 +7,46 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ message: 'Error' });
 
     const { name, phone, message } = req.body;
-
     const SUBDOMAIN = 'uzautotrailer';
-    const ACCESS_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6Ijg2MWIwZDMxYzk1NDY2MWY4ZGNjMGEzMDJmMGU3ZTQ1Y2FlN2RhMmU4NDhmZWJiMjJhZWY3MzMyMTdiZTJkMzQzMjliZjMzZGRhNTM4NDNjIn0.eyJhdWQiOiI4MjY3ZTNiMS1jMmIxLTQzYmYtYTc1OC05OTVjZjE4MGEyYTciLCJqdGkiOiI4NjFiMGQzMWM5NTQ2NjFmOGRjYzBhMzAyZjBlN2U0NWNhZTdkYTJlODQ4ZmViYjIyYWVmNzMzMjE3YmUyZDM0MzI5YmYzM2RkYTUzODQzYyIsImlhdCI6MTc3Nzk4NTM0NiwibmJmIjoxNzc3OTg1MzQ2LCJleHAiOjE5MDUwMzM2MDAsInN1YiI6IjExMjc1ODM0IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMxODQ5NzMwLCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJwdXNoX25vdGlmaWNhdGlvbnMiLCJmaWxlcyIsImNybSIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiODY1Y2UwNDgtNWZjMC00NjU2LWIwZjMtMjViYzBkODU3NWUwIiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.hEXvq_yKfq6_xkIzrnmaXrC3KpXoQzSGAsSpQ735OMIR39rFxSVtXPQpNPO3LLwImWOc-4IR4k-Lb3uWdNfAkURbdcDkdoZog6p7mhuYfafEs43SCISIAVxiaTEU6ntXdQPLrVDsALJo-Ikcbrq-vws8f4Z4MFavviyOrURDIB5_4LpLCY8q1gm9ku_1NT2UmR4bn5Cwj8XHO-_nPE29_xPj4dcOh9puPxHz7xPWslknUdJDSpEl_0WPUs2-UnlOP3O_EqLimbDVFyvSMlK7Xh11I4cjy3COh1HAL0JpTE6GP8nV-jbBOc8sH3ASB3zfziO9rfH0POwuApxB9xxBUQ';
+    const ACCESS_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6Ijg2MWIwZDMxYzk1NDY2MWY4ZGNjMGEzMDJmMGU3ZTQ1Y2FlN2RhMmU4NDhmZWJiMjJhZWY3MzMyMTdiZTJkMzQzMjliZjMzZGRhNTM4NDNjIn0...'; // O'zingizning to'liq tokeningiz
 
     try {
-        const response = await fetch(`https://${SUBDOMAIN}.amocrm.ru/api/v4/leads/complex`, {
+        // 1. Avval kontakt yaratamiz
+        const contactRes = await fetch(`https://${SUBDOMAIN}.amocrm.ru/api/v4/contacts`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${ACCESS_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify([{
+                name: name,
+                custom_fields_values: [{
+                    field_code: "PHONE",
+                    values: [{ value: phone, enum_code: "WORK" }]
+                }]
+            }])
+        });
+        const contactData = await contactRes.json();
+        const contactId = contactData._embedded.contacts[0].id;
+
+        // 2. Keyin bitimni (Lead) aynan o'sha ustunga (Status ID) yaratamiz
+        const leadRes = await fetch(`https://${SUBDOMAIN}.amocrm.ru/api/v4/leads`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
             body: JSON.stringify([{
                 name: `Xabar: ${name}`,
-                pipeline_id: 8390522, // Rasmdagi URL-dan olingan Pipeline ID
-                status_id: 85644878,   // <--- SIZ TOPGAN STATUS ID RAQAMI
+                status_id: 85644878,   // Siz topgan Status ID
+                pipeline_id: 8390522, // Call center voronkasi
                 _embedded: {
-                    contacts: [{
-                        first_name: name,
-                        custom_fields_values: [
-                            { field_code: "PHONE", values: [{ value: phone, enum_code: "WORK" }] }
-                        ]
-                    }]
+                    contacts: [{ id: contactId }]
                 },
-                custom_fields_values: [
-                    {
-                        field_id: 1047683, // Xabar maydoni ID-si
-                        values: [{ value: message }]
-                    }
-                ]
+                custom_fields_values: [{
+                    field_id: 1047683, // Xabar maydoni
+                    values: [{ value: message }]
+                }]
             }])
         });
 
-        const data = await response.json();
-        return res.status(200).json({ success: true, data });
+        const leadData = await leadRes.json();
+        return res.status(200).json({ success: true, leadData });
+
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }
